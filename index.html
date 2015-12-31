@@ -65,6 +65,170 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-apache" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/12/31/apache/" class="article-date">
+  <time datetime="2015-12-31T02:35:31.000Z" itemprop="datePublished">2015-12-31</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/12/31/apache/">apache安全加固</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="u4E00-_u8D26_u53F7_u8BBE_u7F6E"><a href="#u4E00-_u8D26_u53F7_u8BBE_u7F6E" class="headerlink" title="一.账号设置"></a>一.账号设置</h1><p>以专门的用户帐号和组运行 Apache。</p>
+<p>1、根据需要为 Apache 创建用户、组</p>
+<p>2、参考配置操作 如果没有设置用户和组，则新建用户，并在 Apache 配置文件中指定</p>
+<p>(1) 创建 apache 组：groupadd apache</p>
+<p>(2) 创建 apache 用户并加入 apache 组：useradd apache –g apache</p>
+<p>(3) 将下面两行加入 Apache 配置文件 httpd.conf 中</p>
+<p>User apache</p>
+<p>Group apache</p>
+<p>3、检查 httpd.conf 配置文件。 检查是否使用非专用账户（如 root）运行 apache</p>
+<p>默认一般符合要求，linux下默认apache或者nobody用户，Unix默认为daemon用户</p>
+<h1 id="u4E8C-_u6388_u6743_u8BBE_u7F6E"><a href="#u4E8C-_u6388_u6743_u8BBE_u7F6E" class="headerlink" title="二.授权设置"></a>二.授权设置</h1><p>严格控制Apache主目录的访问权限，非超级用户不能修改该目录中的内容</p>
+<p>1、Apache 的 主目录对应 于 Apache Server</p>
+<p>配置文件 httpd.conf 的</p>
+<p>Server Root控制项中，</p>
+<p>应为：</p>
+<p>Server Root /usr/local/apache”</p>
+<p>2、判定条件</p>
+<p>非超级用户不能修改该目录中的内容</p>
+<p>3、检测操作</p>
+<p>尝试修改，看是否能修改</p>
+<p>4、一般为/etc/httpd目录，默认情况下属主为root:root，其它用户不能修改文件，默认一般符合要求</p>
+<p>严格设置配置文件和日志文件的权限，防止未授权访问</p>
+<p>1、chmod 600 /etc/httpd/conf/httpd.conf”设置配置文件为属主可读写，其他用户无权限。</p>
+<p>2、使用命令”chmod 644 /var/log/httpd/*.log”设置日志文件为属主可读写，其他用户只读权限。</p>
+<p>3、/etc/httpd/conf/httpd.conf默认权限是644，可根据需要修改权限为600。</p>
+<p>4、/var/log/httpd/*.log默认权限为644，默认一般符合要求。</p>
+<h1 id="u4E09-_u65E5_u5FD7_u8BBE_u7F6E"><a href="#u4E09-_u65E5_u5FD7_u8BBE_u7F6E" class="headerlink" title="三.日志设置"></a>三.日志设置</h1><p>设备应配置日志功能，对运行错误、用户访问等进行记录，记录</p>
+<p>内容包括时间，用户使用的 IP 地址等内容。</p>
+<p>1、编辑 httpd.conf 配置文件，设置日志记录文件、记录内容、记录 格式。</p>
+<p>其中，错误日志：</p>
+<p>LogLevel notice #日志的级别</p>
+<p>ErrorLog /…/logs/error_log #日志的保存位置（错误日志）</p>
+<p>访问日志：</p>
+<p>LogFormat %h %l %u %t \”%r\” %&gt;s %b “%{Accept}i\”%{Referer}i\” \”%{User-Agent}i\””</p>
+<p>combined</p>
+<p>CustomLog /…/logs/access_log combined （访问日志）</p>
+<p>ErrorLog 指令设置错误日志文件名和位置。错误日志是最重要的 日志文件，</p>
+<p>Apache httpd 将在这个文件中存放诊断信息和处理请 求中出现的错误。</p>
+<p>若要将错误日志送到 Syslog，则设置： ErrorLog syslog。</p>
+<p>CustomLog 指令指定了保存日志文件的具体位置以及日志的格式。访问日志中会记录服务器所处理的所有请求。</p>
+<p>LogFormat 设置日志格式，建议设置为 combined 格式。</p>
+<p>LogLevel 用于调整记录在错误日志中的信息的详细程度，建议设置为notice。</p>
+<p>日志的级别，默认是warn，notice级别比较详细，在实际中由于日志会占用大量硬盘空间，一般没有设置</p>
+<h1 id="u56DB-_u7981_u6B62_u8BBF_u95EE_u5916_u90E8_u6587_u4EF6"><a href="#u56DB-_u7981_u6B62_u8BBF_u95EE_u5916_u90E8_u6587_u4EF6" class="headerlink" title="四.禁止访问外部文件"></a>四.禁止访问外部文件</h1><p>禁止 Apache 访问 Web 目录之外的任何文件。</p>
+<p>1、参考配置操作</p>
+<p>编辑 httpd.conf 配置文件，</p>
+<p>Order Deny,Allow</p>
+<p>Deny from all</p>
+<p>2、设置可访问目录，</p>
+<p>Order Allow,Deny</p>
+<p>Allow from all</p>
+<p>其中/web 为网站根目录</p>
+<p>3、默认配置是</p>
+<p>Options FollowSymLinks</p>
+<p>AllowOverride None</p>
+<p>一般可根据需要设置</p>
+<h1 id="u4E94-_u76EE_u5F55_u5217_u51FA"><a href="#u4E94-_u76EE_u5F55_u5217_u51FA" class="headerlink" title="五.目录列出"></a>五.目录列出</h1><p>禁止 Apache 列表显示文件<br>编辑 httpd.conf 配置文件。</p>
+<p>Options Indexes FollowSymLinks #删掉</p>
+<p>Indexes</p>
+<p>AllowOverride None</p>
+<p>Order allow,deny</p>
+<p>Allow from all</p>
+<p>将Options Indexes FollowSymLinks 中的 Indexes 去掉，就可以禁 止 Apache 显示该目录结构。</p>
+<p>Indexes 的作用就是当该目录下没 有 index.html 文件时，就显示目录结构。</p>
+<p>2、重新启动 Apache 服务</p>
+<p>3、可以设置 /etc/httpd/httpd.conf 段中删除Options的Indexes设置 一般可根据需要设置</p>
+<h1 id="u516D-_u9519_u8BEF_u9875_u9762_u91CD_u5B9A_u5411"><a href="#u516D-_u9519_u8BEF_u9875_u9762_u91CD_u5B9A_u5411" class="headerlink" title="六.错误页面重定向"></a>六.错误页面重定向</h1><p>Apache 错误页面重定向</p>
+<p>1、修改 httpd.conf 配置文件：</p>
+<p>ErrorDocument 400 /custom400.html</p>
+<p>ErrorDocument 401 /custom401.html</p>
+<p>ErrorDocument 403 /custom403.html</p>
+<p>ErrorDocument 404 /custom404.html</p>
+<p>ErrorDocument 405 /custom405.html</p>
+<p>ErrorDocument 500 /custom500.html Customxxx.html 为要设置的错误页面。</p>
+<p>2、重新启动 Apache 服务</p>
+<p>3、此项需要应用系统设有错误页面，或者不在httpd中设置完全由业务逻辑实现，可不做</p>
+<h1 id="u4E03-_u62D2_u7EDD_u670D_u52A1_u9632_u8303"><a href="#u4E03-_u62D2_u7EDD_u670D_u52A1_u9632_u8303" class="headerlink" title="七.拒绝服务防范"></a>七.拒绝服务防范</h1><p>根据业务需要，合理设置 session 时间，防止拒绝服务攻击<br>1、编辑 httpd.conf 配置文件，</p>
+<p>Timeout 10 #客户端与服务器端建立连接前的时间间隔</p>
+<p>KeepAlive On<br>KeepAliveTimeout 15 #限制每个 session 的保持时间是 15 秒 注：此处为一建议值，具体的设定需要根据现实情况。<br>2、重新启动 Apache 服务</p>
+<p>3、默认Timeout 120 KeepAlive Off，KeepAliveTimeout 15，该项设置涉及性能调整，一般不做。</p>
+<h1 id="u516B-_u9690_u85CF_Apache__u7684_u7248_u672C_u53F7"><a href="#u516B-_u9690_u85CF_Apache__u7684_u7248_u672C_u53F7" class="headerlink" title="八.隐藏 Apache 的版本号"></a>八.隐藏 Apache 的版本号</h1><p>隐藏 Apache 的版本号及其它敏感信息。</p>
+<p>1、配置操作</p>
+<p>修改 httpd.conf 配置文件： ServerSignature Off ServerTokens Prod</p>
+<p>2、默认是 ServerSignature On，ServerTokens OS，可以设置</p>
+<h1 id="u4E5D-_u5173_u95ED_TRACE"><a href="#u4E5D-_u5173_u95ED_TRACE" class="headerlink" title="九.关闭 TRACE"></a>九.关闭 TRACE</h1><p>关闭 TRACE，防止 TRACE 方法被访问者恶意利用</p>
+<p>1、 配置修改vim /etc/httpd/conf/httpd.conf</p>
+<p>添加 “TraceEnable Off”</p>
+<p>注：适用于 Apache 2.0 以上版本</p>
+<p>2、默认没有该项设置，可以做。</p>
+<h1 id="u5341-_u7981_u7528_CGI"><a href="#u5341-_u7981_u7528_CGI" class="headerlink" title="十.禁用 CGI"></a>十.禁用 CGI</h1><p>如果服务器上不需要运行 CGI 程序，建议禁用 CGI</p>
+<p>1、 修改配置vim /etc/httpd/conf/httpd.conf</p>
+<p>把 cgi-bin 目录的配置和模块都注释掉</p>
+<p>#LoadModule cgi_module modules/mod_cgi.so</p>
+<p>#ScriptAlias /cgi-bin/ “/var/www/cgi-bin/”</p>
+<p>#</p>
+<p>#AllowOverride None</p>
+<p>#Options None</p>
+<p>#Order allow,deny</p>
+<p>#Allow from all</p>
+<p>2、 根据需要设置，如果没有CGI程序，可以关闭</p>
+<h1 id="u5341_u4E00-_u76D1_u542C_u5730_u5740_u7ED1_u5B9A"><a href="#u5341_u4E00-_u76D1_u542C_u5730_u5740_u7ED1_u5B9A" class="headerlink" title="十一.监听地址绑定"></a>十一.监听地址绑定</h1><p>服务器有多个 IP 地址时，只监听提供服务的 IP 地址</p>
+<p>1、 修改配置vim /etc/httpd/conf/httpd.con</p>
+<p>修改</p>
+<p>Listen x.x.x.x:80</p>
+<p>2、检测操作</p>
+<p>使用命令”cat /etc/httpd/conf/httpd.conf|grep Listen”查看是否 绑定 IP 地址</p>
+<p>3、默认设置是Listen 80监听所有地址，如果服务器只有一个IP地址可不做该项设置，如果有多个IP可以按照需要设。</p>
+<h1 id="u5341_u4E8C-_u5220_u9664_u7F3A_u7701_u5B89_u88C5_u7684_u65E0_u7528_u6587_u4EF6"><a href="#u5341_u4E8C-_u5220_u9664_u7F3A_u7701_u5B89_u88C5_u7684_u65E0_u7528_u6587_u4EF6" class="headerlink" title="十二.删除缺省安装的无用文件"></a>十二.删除缺省安装的无用文件</h1><p>删除缺省安装的无用文件。</p>
+<p>1、参考配置操作删除缺省 HTML 文件：</p>
+<p>#rm -rf /usr/local/apache2/htdocs/*</p>
+<p>删除缺省的 CGI 脚本：</p>
+<p>#rm –rf /usr/local/apache2/cgi-bin/*</p>
+<p>删除 Apache 说明文件：</p>
+<p>#rm –rf /usr/local/apache2/manual</p>
+<p>删除源代码文件：</p>
+<p>#rm -rf /path/to/httpd-2.2.4* 根据安装步骤不同和版本不同，某些目录或文件可能不存在或位置不同。</p>
+<p>2、可根据实际情况删除，一般是 /var/www/html /var/www/cgi-bin 默认就是空的</p>
+<h1 id="u5341_u4E09-_u7981_u7528_u975E_u6CD5_HTTP__u65B9_u6CD5"><a href="#u5341_u4E09-_u7981_u7528_u975E_u6CD5_HTTP__u65B9_u6CD5" class="headerlink" title="十三.禁用非法 HTTP 方法"></a>十三.禁用非法 HTTP 方法</h1><p>禁用PUT、DELETE等危险的HTTP 方法；</p>
+<p>1、 编辑 httpd.conf 文件。</p>
+<p>只允许 get、post 方法</p>
+<p>Deny from all</p>
+<p>2、检测操作</p>
+<p>查看 httpd.conf 文件，</p>
+<p>检查如下内容，是否只允许 get、post</p>
+<p>方法</p>
+<p>Deny from all</p>
+<p>3、根据需要可设置，如果没有不需要用到put delete HTTP 方法的话，</p>
+<p>加在/etc/httpd/conf/httpd.conf的段中。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/12/31/apache/" data-id="ciitn5o1k0003jkfw4wush4g8" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2015/12/25/hello-world/" class="article-date">
@@ -95,7 +259,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/12/25/hello-world/" data-id="ciilee73t0001qgfwhzbcfrg4" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/12/25/hello-world/" data-id="ciitn5o140002jkfwwnn6euxa" class="article-share-link">Share</a>
       
       
     </footer>
@@ -383,7 +547,7 @@ tt p://6 6.000146.0×7.147/&quot;&quot;&gt;XSS&lt;/A&gt;
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/12/25/XSS/" data-id="ciilee73x0002qgfwbc75sepl" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/12/25/XSS/" data-id="ciitn5nrl0000jkfwxxktlt4q" class="article-share-link">Share</a>
       
       
     </footer>
@@ -422,7 +586,7 @@ tt p://6 6.000146.0×7.147/&quot;&quot;&gt;XSS&lt;/A&gt;
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/12/25/sqlmap/" data-id="ciilf0tt000008wfwy3ap2h81" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/12/25/sqlmap/" data-id="ciitn5o0p0001jkfwwvst5pn0" class="article-share-link">Share</a>
       
       
     </footer>
@@ -447,7 +611,7 @@ tt p://6 6.000146.0×7.147/&quot;&quot;&gt;XSS&lt;/A&gt;
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">3</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -457,6 +621,10 @@ tt p://6 6.000146.0×7.147/&quot;&quot;&gt;XSS&lt;/A&gt;
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2015/12/31/apache/">apache安全加固</a>
+          </li>
         
           <li>
             <a href="/2015/12/25/hello-world/">欢迎来到博客</a>
