@@ -3,24 +3,27 @@
 <head>
   <meta charset="utf-8">
   
-  <title>欢迎来到博客 | oneplusone&#39;s blog</title>
+  <title>使用curl进行文件上传 | oneplusone&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="欢迎来到oneplusone的博客好好努力，加油哦！少年！记得好好整理博客！写博客一是为了给自己以前的工作做一个总结;二是告诫自己忽忘初心，静下心来，安安静静的写点东西;三是给未来的自己留下点值得回忆的岁月;若有不当之处，定当改过！
-
-写给自己">
+  <meta name="description" content="最近测试文件上传功能，手工上传太麻烦，就想有没有比较简单的方法，发现curl竟然提供了通过post上传文件的功能
+“curl -d URL” 可以向URL发送post请求参数
+-F 功能则可以post请求上传文件使用curl 通过post 向HTTP上传文件直接贴代码 
+curl -F file=@1.txt submit=Submit URL">
 <meta property="og:type" content="article">
-<meta property="og:title" content="欢迎来到博客">
-<meta property="og:url" content="http://yoursite.com/2015/12/25/hello-world/index.html">
+<meta property="og:title" content="使用curl进行文件上传">
+<meta property="og:url" content="http://yoursite.com/2016/01/04/curl/index.html">
 <meta property="og:site_name" content="oneplusone's blog">
-<meta property="og:description" content="欢迎来到oneplusone的博客好好努力，加油哦！少年！记得好好整理博客！写博客一是为了给自己以前的工作做一个总结;二是告诫自己忽忘初心，静下心来，安安静静的写点东西;三是给未来的自己留下点值得回忆的岁月;若有不当之处，定当改过！
-
-写给自己">
-<meta property="og:updated_time" content="2015-12-25T08:56:16.542Z">
+<meta property="og:description" content="最近测试文件上传功能，手工上传太麻烦，就想有没有比较简单的方法，发现curl竟然提供了通过post上传文件的功能
+“curl -d URL” 可以向URL发送post请求参数
+-F 功能则可以post请求上传文件使用curl 通过post 向HTTP上传文件直接贴代码 
+curl -F file=@1.txt submit=Submit URL">
+<meta property="og:updated_time" content="2016-01-04T08:32:22.987Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="欢迎来到博客">
-<meta name="twitter:description" content="欢迎来到oneplusone的博客好好努力，加油哦！少年！记得好好整理博客！写博客一是为了给自己以前的工作做一个总结;二是告诫自己忽忘初心，静下心来，安安静静的写点东西;三是给未来的自己留下点值得回忆的岁月;若有不当之处，定当改过！
-
-写给自己">
+<meta name="twitter:title" content="使用curl进行文件上传">
+<meta name="twitter:description" content="最近测试文件上传功能，手工上传太麻烦，就想有没有比较简单的方法，发现curl竟然提供了通过post上传文件的功能
+“curl -d URL” 可以向URL发送post请求参数
+-F 功能则可以post请求上传文件使用curl 通过post 向HTTP上传文件直接贴代码 
+curl -F file=@1.txt submit=Submit URL">
   
     <link rel="alternative" href="/atom.xml" title="oneplusone&#39;s blog" type="application/atom+xml">
   
@@ -70,10 +73,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-curl" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2015/12/25/hello-world/" class="article-date">
-  <time datetime="2015-12-25T08:56:16.542Z" itemprop="datePublished">2015-12-25</time>
+    <a href="/2016/01/04/curl/" class="article-date">
+  <time datetime="2016-01-04T08:27:17.000Z" itemprop="datePublished">2016-01-04</time>
 </a>
     
   </div>
@@ -84,7 +87,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      欢迎来到博客
+      使用curl进行文件上传
     </h1>
   
 
@@ -92,15 +95,14 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>欢迎来到oneplusone的博客<br>好好努力，加油哦！少年！记得好好整理博客！<br>写博客一是为了给自己以前的工作做一个总结;<br>二是告诫自己忽忘初心，静下心来，安安静静的写点东西;<br>三是给未来的自己留下点值得回忆的岁月;<br>若有不当之处，定当改过！</p>
-<blockquote>
-<pre><code>写给自己
-</code></pre></blockquote>
-
+        <p>最近测试文件上传功能，手工上传太麻烦，就想有没有比较简单的方法，<br>发现curl竟然提供了通过post上传文件的功能</p>
+<h2 id="u201Ccurl_-d_URL_u201D"><a href="#u201Ccurl_-d_URL_u201D" class="headerlink" title="“curl -d URL”"></a>“curl -d URL” </h2><p>可以向URL发送post请求参数</p>
+<p>-F 功能则可以post请求上传文件<br>使用curl <wbr>通过post <wbr>向HTTP上传文件直接贴代码 </p>
+<h2 id="curl_-F_file_3D@1-txt_submit_3DSubmit_URL"><a href="#curl_-F_file_3D@1-txt_submit_3DSubmit_URL" class="headerlink" title="curl -F file=@1.txt submit=Submit URL"></a>curl -F file=@1.txt submit=Submit URL</h2>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/12/25/hello-world/" data-id="ciizpwjo300021wfwtpj8fjld" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/01/04/curl/" data-id="ciizpwjo600031wfw6lvvhlff" class="article-share-link">Share</a>
       
       
     </footer>
@@ -109,19 +111,10 @@
     
 <nav id="article-nav">
   
-    <a href="/2015/12/31/apache/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          apache安全加固
-        
-      </div>
-    </a>
   
-  
-    <a href="/2015/12/25/XSS/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2016/01/04/cmdtime/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">XSS跨站脚本攻击汇总</div>
+      <div class="article-nav-title">批处理脚本解决0点问题</div>
     </a>
   
 </nav>

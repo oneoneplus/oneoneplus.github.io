@@ -65,6 +65,84 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-curl" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/01/04/curl/" class="article-date">
+  <time datetime="2016-01-04T08:27:17.000Z" itemprop="datePublished">2016-01-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/01/04/curl/">使用curl进行文件上传</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近测试文件上传功能，手工上传太麻烦，就想有没有比较简单的方法，<br>发现curl竟然提供了通过post上传文件的功能</p>
+<h2 id="u201Ccurl_-d_URL_u201D"><a href="#u201Ccurl_-d_URL_u201D" class="headerlink" title="“curl -d URL”"></a>“curl -d URL” </h2><p>可以向URL发送post请求参数</p>
+<p>-F 功能则可以post请求上传文件<br>使用curl <wbr>通过post <wbr>向HTTP上传文件直接贴代码 </p>
+<h2 id="curl_-F_file_3D@1-txt_submit_3DSubmit_URL"><a href="#curl_-F_file_3D@1-txt_submit_3DSubmit_URL" class="headerlink" title="curl -F file=@1.txt submit=Submit URL"></a>curl -F file=@1.txt submit=Submit URL</h2>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2016/01/04/curl/" data-id="ciizpwjo600031wfw6lvvhlff" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-cmdtime" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/01/04/cmdtime/" class="article-date">
+  <time datetime="2016-01-04T08:25:40.000Z" itemprop="datePublished">2016-01-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/01/04/cmdtime/">批处理脚本解决0点问题</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近用批处理按照日期和小时生成文件夹进行每小时的工作统计，遇到过23点后文件夹无法生成。经过网上查找资料 原来</p>
+<p>是10点之前的小时数为单个，在过完23点后无法生成00。解决过程如下:<br>批处理获取当前时间对10点之前获取小时进行补0，<br>set hh=%time:~0,2%<br>if /i %hh% LSS 10 (set hh=0%time:~1,1%)<br>set AFile=Web_%date:~5,2%%date:~8,2%%hh%<br>rd %AFile% 2&gt;nul<br>mkdir %AFile%<br>生成文件夹10点之前的即为 061809</p>
+<p>AFile即为要生成的时间</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2016/01/04/cmdtime/" data-id="ciizpwjo900041wfwafve9hon" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-apache" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2015/12/31/apache/" class="article-date">
@@ -219,7 +297,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/12/31/apache/" data-id="ciitn5o1k0003jkfw4wush4g8" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/12/31/apache/" data-id="ciizpwjoc00051wfwj7duegsf" class="article-share-link">Share</a>
       
       
     </footer>
@@ -259,7 +337,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/12/25/hello-world/" data-id="ciitn5o140002jkfwwnn6euxa" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/12/25/hello-world/" data-id="ciizpwjo300021wfwtpj8fjld" class="article-share-link">Share</a>
       
       
     </footer>
@@ -547,7 +625,7 @@ tt p://6 6.000146.0×7.147/&quot;&quot;&gt;XSS&lt;/A&gt;
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/12/25/XSS/" data-id="ciitn5nrl0000jkfwxxktlt4q" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/12/25/XSS/" data-id="ciizpwjnf00001wfw2n1sf1mx" class="article-share-link">Share</a>
       
       
     </footer>
@@ -586,7 +664,7 @@ tt p://6 6.000146.0×7.147/&quot;&quot;&gt;XSS&lt;/A&gt;
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/12/25/sqlmap/" data-id="ciitn5o0p0001jkfwwvst5pn0" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/12/25/sqlmap/" data-id="ciizpwjnz00011wfw664e7twz" class="article-share-link">Share</a>
       
       
     </footer>
@@ -611,7 +689,7 @@ tt p://6 6.000146.0×7.147/&quot;&quot;&gt;XSS&lt;/A&gt;
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -623,6 +701,14 @@ tt p://6 6.000146.0×7.147/&quot;&quot;&gt;XSS&lt;/A&gt;
       <ul>
         
           <li>
+            <a href="/2016/01/04/curl/">使用curl进行文件上传</a>
+          </li>
+        
+          <li>
+            <a href="/2016/01/04/cmdtime/">批处理脚本解决0点问题</a>
+          </li>
+        
+          <li>
             <a href="/2015/12/31/apache/">apache安全加固</a>
           </li>
         
@@ -632,10 +718,6 @@ tt p://6 6.000146.0×7.147/&quot;&quot;&gt;XSS&lt;/A&gt;
         
           <li>
             <a href="/2015/12/25/XSS/">XSS跨站脚本攻击汇总</a>
-          </li>
-        
-          <li>
-            <a href="/2015/12/25/sqlmap/">sqlmap用法指南</a>
           </li>
         
       </ul>
@@ -650,7 +732,7 @@ tt p://6 6.000146.0×7.147/&quot;&quot;&gt;XSS&lt;/A&gt;
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2015 oneplusone<br>
+      &copy; 2016 oneplusone<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
